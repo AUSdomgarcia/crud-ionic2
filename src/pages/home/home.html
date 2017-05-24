@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-navbar color="primary">
+      <button ion-button menuToggle icon-only>
+          <ion-icon name="menu"></ion-icon>
+      </button>
+      <ion-title>Contacts</ion-title>
+
+  </ion-navbar>
+</ion-header>
+
+<!--START:CONTENT-->
+<ion-content>
+
+  <!--START:CARD-->
+  <ion-card>
+    <ion-card-header>
+      My Contacts
+    </ion-card-header>
+    
+    <ion-card-content>
+    
+      <ion-list>
+
+        <button ion-item *ngFor="let user of users" >
+          <ion-avatar item-left>
+            <img src="../../assets/uploads/user.jpg">
+          </ion-avatar>
+          <h2>{{user?.fullname}}</h2>
+          <p>{{user?.description}}</p>
+          <p>{{user?.email}}</p>
+        </button>
+        
+      </ion-list>
+    
+    </ion-card-content>
+    <!--END:CARD-->
+  </ion-card>
+
+  
+
+<!--END:CONTENT-->
+</ion-content>
+
+<div class="fixed-outsite">
+  <button ion-button 
+          block 
+          color="primary"
+          (click)="toogleAddUser()">Add Contact</button>
+</div>

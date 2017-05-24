@@ -1,0 +1,82 @@
+<!--
+  Generated template for the UserPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+
+    <ion-buttons left>
+      <button ion-button clear (click)="toggleCancel()">
+        <ion-icon name="close"></ion-icon>
+        <span>&nbsp;&nbsp;Cancel</span>
+      </button>
+    </ion-buttons>
+    
+    <ion-buttons right>
+      <button ion-button clear (click)="toggleDone(formGroup.value)">
+        <ion-icon name="checkmark"></ion-icon>
+        <span>&nbsp;&nbsp;Done</span>
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+     <!--START FORM-->
+      <form [formGroup]="formGroup" 
+            (ngSubmit)="toggleAddUser(formGroup.value)">
+
+        <ion-list>
+
+          <ion-item>
+            <ion-label stacked>Full Name <span *ngIf="!hasFullName" class="msg-error">*You must include a full name</span></ion-label>
+            <ion-input type="text"
+                       name="fullname"
+                       [formControl]="formGroup.controls['fullname']"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label stacked>Email <span *ngIf="!hasEmail" class="msg-error">You must include a valid email</span></ion-label>
+            <ion-input type="text"
+                       name="email"
+                       [formControl]="formGroup.controls['email']"></ion-input>
+          </ion-item>
+          
+          <ion-item>
+            <ion-label stacked>Gender <span *ngIf="!hasGender" class="msg-error">You must select a gender</span></ion-label>
+            <ion-select name="gender" [formControl]="formGroup.controls['gender']">
+              <ion-option value="select">Select Gender</ion-option>
+              <ion-option value="male">Male</ion-option>
+              <ion-option value="female">Female</ion-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label stacked>Password <span *ngIf="!hasPassword" class="msg-error">You must include a password</span></ion-label>
+            <ion-input type="password"
+                       name="password"
+                       [formControl]="formGroup.controls['password']"></ion-input>
+          </ion-item>
+          
+          <ion-item>
+            <ion-label stacked>Short Description <span *ngIf="!hasDescription" class="msg-error">You must include a description</span></ion-label>
+            <ion-input type="text"
+                       name="description"
+                       [formControl]="formGroup.controls['description']"></ion-input>
+          </ion-item>
+
+        </ion-list>
+        
+        <!--<button ion-button 
+                color="primary"
+                type="submit">Submit</button>
+        <button ion-button 
+                color="light"
+                type="button">Clear</button>-->
+                
+      </form>
+      <!--END FORM-->
+</ion-content>

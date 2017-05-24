@@ -1,0 +1,59 @@
+.loginBg {
+    /* IE10+ */ 
+    background-image: -ms-radial-gradient(center, ellipse closest-corner, #FFFFFF 0%, #5C5C5C 50%, #212121 100%);
+    /* Mozilla Firefox */ 
+    background-image: -moz-radial-gradient(center, ellipse closest-corner, #FFFFFF 0%, #5C5C5C 50%, #212121 100%);
+    /* Opera */ 
+    background-image: -o-radial-gradient(center, ellipse closest-corner, #FFFFFF 0%, #5C5C5C 50%, #212121 100%);
+    /* Webkit (Safari/Chrome 10) */ 
+    background-image: -webkit-gradient(radial, center center, 0, center center, 362, color-stop(0, #FFFFFF), color-stop(50, #5C5C5C), color-stop(100, #212121));
+    /* Webkit (Chrome 11+) */ 
+    background-image: -webkit-radial-gradient(center, ellipse closest-corner, #FFFFFF 0%, #5C5C5C 50%, #212121 100%);
+    /* W3C Markup */ 
+    background-image: radial-gradient(ellipse closest-corner at center, #FFFFFF 0%, #5C5C5C 50%, #212121 100%);
+}
+.nopadleft {
+    padding-left: 0 !important;
+}
+.custom-card {
+    background-color: rgba(0,0,0,0.3);
+}
+.customBg {
+    background-color: rgba(0,0,0,0.5) !important;
+    border: 1px solid #fff;
+}
+.customBg input {
+    padding: 0 10px !important; 
+    color: #eff80b !important;
+}
+.button-color {
+    background-color: #d6dd0b !important;
+    color: #000 !important;
+    font-weight: bold !important;
+}
+.noBottomBorder {
+    border-bottom: 0 !important;
+}
+.custompads {
+    padding: 0;
+}
+
+.label-md[stacked], .label-md[floating],
+.label-ios[stacked], .label-ios[floating],
+.label-wp[stacked], .label-wp[floating] {
+    margin-left: 10px;
+    color: #fff;
+}
+
+.item-md.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner,
+.item-ios.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner,
+.item-wp.item-input.ng-valid.input-has-value:not(.input-has-focus) .item-inner {
+    border-bottom-color: none !important;
+    box-shadow: none !important;
+}
+
+.toast-danger {
+  > div{
+       background-color: #f00 !important;
+   }
+}
