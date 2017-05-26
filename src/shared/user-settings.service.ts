@@ -123,7 +123,10 @@ export class UserSettings {
                 db.executeSql(`SELECT * FROM users`, [])
 
                 .then( (res) => { 
-                    if(res.rows.length !== 0){
+
+                    alert('AFTER_* ' + JSON.stringify(res));
+
+                    if(res.rows.length > 0){
                         
                         db.executeSql(`SELECT rowid, email, fullname, password, gender, description
                                         FROM users`, [])
