@@ -21,7 +21,10 @@
     
       <ion-list>
 
-        <button ion-item *ngFor="let user of users" >
+        <button ion-item 
+            *ngFor="let user of users; let i = index" 
+            (click)="showUser(user)">
+            
           <ion-avatar item-left>
             <img src="../../assets/uploads/user.jpg">
           </ion-avatar>

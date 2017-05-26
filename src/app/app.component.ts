@@ -15,19 +15,23 @@ export class MyApp {
   // rootPage:any = LoginPage;
   rootPage:any = HomePage;
 
-  constructor(platform: Platform, 
+  constructor(private platform: Platform, 
               statusBar: StatusBar, 
               splashScreen: SplashScreen,
               userSettings: UserSettings) {
-    platform.ready().then(() => {
+
+    platform.ready().then((device) => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      
-      userSettings.initSQLite();
-
       statusBar.styleDefault();
-      
       splashScreen.hide();
+
+      let isNative = false;
+       
+      if(this.platform.is('cordova')){
+        isNative = true;
+      }
+      userSettings.initSQLite(isNative);
     });
   }
 }
