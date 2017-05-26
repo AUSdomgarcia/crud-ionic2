@@ -26,18 +26,6 @@ export class HomePage {
 
     this.events.subscribe('user:updated', () => this.updateUsers() );
     
-    this.events.subscribe('user:deleted', () => this.updateUsers() );
-
-    this.events.subscribe('close:userPopOver', () => {
-
-      let toaster = this.toastCtrl.create({
-        message: 'User was deleted successfully.',
-        duration: 2000
-      });
-      
-      toaster.present();
-    });
-
     this.updateUsers();
   }
   

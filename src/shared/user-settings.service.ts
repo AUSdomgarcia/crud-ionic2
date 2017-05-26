@@ -16,7 +16,7 @@ export class UserSettings {
         .then( (db: SQLiteObject) => {
             db.executeSql(`DELETE FROM users`, [])
             .then(() => {
-                alert('truncate sql successfully');
+                // alert('truncate sql successfully');
             })
             .catch( (e) => alert('TRUNC_ERROR ' + JSON.stringify(e)) );
         })
@@ -31,7 +31,7 @@ export class UserSettings {
         .then( (db: SQLiteObject) => {
             db.executeSql(`DROP TABLE users`, [])
             .then(() => {
-                alert('Drop sql successfully');
+                // alert('Drop sql successfully');
             })
             .catch( (e) => { alert('DROP_ERROR ' + JSON.stringify(e)) } );
         })
@@ -56,7 +56,9 @@ export class UserSettings {
                             description TEXT NOT NULL
                         )`, [])
 
-                        .then(() => { alert('NATIVE sql successfully!') })
+                        .then(() => { 
+                            // alert('NATIVE sql successfully!') 
+                        })
 
                         .catch( (e) => alert('CREATE_ERROR ' + JSON.stringify(e)) );
             })
@@ -77,26 +79,35 @@ export class UserSettings {
     }
 
     addUser(formData){
-        this.sqlite.create({
-            name: 'prototype.db',
-            location: 'default'
-        })
-        .then( (db: SQLiteObject) => {
-            db.executeSql(
-                    `INSERT INTO users VALUES (?, ?, ?, ?, ?)`,
-                     [
-                        formData['email'],
-                        formData['fullname'],
-                        formData['password'],
-                        formData['gender'],
-                        formData['description']
-                    ])
-
-                    .then(() => { this.events.publish('user:added') })
-                    
-                    .catch( (e) => alert('CREATE_ERROR ' + JSON.stringify(e)) );
-        })
-        .catch( (e)=> { alert('DB_CONN_ERROR ' + JSON.stringify(e)) });
+        return new Promise( (resolve, reject) => {
+            this.sqlite.create({
+                name: 'prototype.db',
+                location: 'default'
+            })
+            .then( (db: SQLiteObject) => {
+                db.executeSql(
+                        `INSERT INTO users VALUES (?, ?, ?, ?, ?)`,
+                        [
+                            formData['email'],
+                            formData['fullname'],
+                            formData['password'],
+                            formData['gender'],
+                            formData['description']
+                        ])
+                        .then(() => { 
+                            this.events.publish('user:added');
+                            resolve();
+                        })
+                        .catch( (e) => {
+                            alert('CREATE_ERROR ' + JSON.stringify(e));
+                            reject();
+                        });
+            })
+            .catch( (e)=> { 
+                alert('DB_CONN_ERROR ' + JSON.stringify(e));
+                reject();
+            });
+        });
     }
 
     getUsers(){
@@ -119,9 +130,6 @@ export class UserSettings {
 
                         .then( (result) => {
                             for(let i = 0; i < result.rows.length; i++){
-                                
-                                // alert( JSON.stringify(result.rows.item(i)) );
-                                
                                 collections
                                     .push({
                                         rowid: result.rows.item(i).rowid,
@@ -183,12 +191,11 @@ export class UserSettings {
                                 WHERE rowid = ?`, 
                                 [rowid] )
                 .then( (result) => { 
-                    this.events.publish('user:deleted');
                     resolve();
                 })
                     
                 .catch( (e) => { 
-                    alert('SHOW_ERROR ' + JSON.stringify(e))
+                    alert('DELETE_ERROR ' + JSON.stringify(e))
                     reject( JSON.stringify(e) );
                 });
             })
@@ -200,37 +207,51 @@ export class UserSettings {
     }
 
     updateUser(rowid, formData){
-        this.sqlite.create({
-            name: 'prototype.db',
-            location: 'default'
-        })
-        .then( (db: SQLiteObject) => {
-            db.executeSql(`UPDATE users
-                            SET email = ?,
-                                fullname = ?,
-                                password = ?,
-                                gender = ?,
-                                description = ?
-                            WHERE rowid = ?`, 
-                            [
-                                formData['email'],
-                                formData['fullname'],
-                                formData['password'],
-                                formData['gender'],
-                                formData['description'],
-                                rowid
-                            ] )
+        return new Promise( (resolve, reject) => {
 
-            .then( (result) => { 
-                this.events.publish('user:updated');
+            this.sqlite.create({
+                name: 'prototype.db',
+                location: 'default'
             })
-            .catch( (e) => { 
-                alert('UPDATE_ERROR ' + JSON.stringify(e))
-            });
-        })
+            .then( (db: SQLiteObject) => {
+                db.executeSql(`UPDATE users
+                                SET email = ?,
+                                    fullname = ?,
+                                    password = ?,
+                                    gender = ?,
+                                    description = ?
+                                WHERE rowid = ?`, 
+                                [
+                                    formData['email'],
+                                    formData['fullname'],
+                                    formData['password'],
+                                    formData['gender'],
+                                    formData['description'],
+                                    rowid
+                                ] )
 
-        .catch( (e)=> { 
-            alert('DB_CONN_ERROR ' + JSON.stringify(e)) 
+                .then( (result) => { 
+                    resolve(
+                        {
+                            email: formData['email'],
+                            fullname: formData['fullname'],
+                            password: formData['password'],
+                            gender: formData['gender'],
+                            description: formData['description'],
+                            rowid: rowid
+                        }
+                    );
+                })
+                .catch( (e) => { 
+                    alert('UPDATE_ERROR ' + JSON.stringify(e));
+                    reject();
+                });
+            })
+
+            .catch( (e)=> { 
+                alert('DB_CONN_ERROR ' + JSON.stringify(e));
+                reject();
+            });
         });
     }
 }

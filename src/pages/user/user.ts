@@ -1,3 +1,4 @@
+import { UserDetailsPage } from '../user-details/user-details';
 import { HomePage } from '../home/home';
 import { UserSettings } from '../../shared/shared';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -27,7 +28,7 @@ export class UserPage {
   hasPassword: Boolean = true;
   hasDescription: Boolean = true;
 
-  isEdit: Boolean = false;
+  isEditing: Boolean = false;
   rowid;
   user;
 
@@ -61,26 +62,44 @@ export class UserPage {
 
     if(this.formGroup.valid && this.hasGender){
 
-      if(!this.isEdit){
-        this.userSettings.addUser(formData);
+      if(this.isEditing){
+
+        this.userSettings.updateUser(this.rowid, formData)
+
+          .then( (res) => { 
+            
+            this.navCtrl.pop();
+
+            this.events.publish('user:added');
+
+            this.events.publish('userdetails:updated', res );
+
+          })
+          .catch( (e) => { 
+            alert('IS_EDITING ' + JSON.stringify(e))
+          });
+
       } else {
-        this.userSettings.updateUser(this.rowid, formData);
+        // alert('to save');
+        this.userSettings.addUser(formData)
+          .then( (res) => {
+            this.events.publish('user:added');
+            this.navCtrl.pop();
+          })
+          .catch( (e) => { 
+            alert('IS_ADDING ' + JSON.stringify(e))
+          });
       }
     }
   }
   
   ionViewDidLoad() {
     this.viewCtrl.showBackButton(false);
-    
-    this.events.subscribe('user:added', () => this.toggleCancel() );
-
-    // this.events.subscribe('user:updated', () => this.toggleCancel() );
-
-    // alert('@user ' + JSON.stringify(this.navParams.data));
 
     for(let prop in this.navParams.data){
+
       if(this.navParams.data.hasOwnProperty(prop)){
-        this.isEdit = true;
+        this.isEditing = true;
         this.user = this.navParams.data;
         
         this.formGroup.controls['fullname'].setValue(this.user.fullname);
@@ -90,12 +109,14 @@ export class UserPage {
         this.formGroup.controls['description'].setValue(this.user.description);
         this.rowid = this.navParams.data.rowid;
 
+        break;
+
       } else {
-        this.isEdit = false;
+        this.isEditing = false;
       }
     }
   }
-
+  // toggle outside
   toggleCancel(){
     this.navCtrl.pop();
   }
