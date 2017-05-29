@@ -39,7 +39,7 @@ export class UserSettings {
     }
     
     initSQLite(isNative){
-        // this.truncateDB();
+        this.truncateDB();
 
         if(isNative){
             this.sqlite.create({
@@ -59,13 +59,12 @@ export class UserSettings {
                         .then(() => { 
                             // alert('NATIVE sql successfully!') 
                         })
-
                         .catch( (e) => alert('CREATE_ERROR ' + JSON.stringify(e)) );
             })
             .catch( (e)=> { alert('DB_CONN_ERROR' + JSON.stringify(e)) });
         }
         
-        if(!isNative){
+        if( ! isNative){
             // let db = window
             //     .sqlitePlugin
             //     .openDatabase({ name: 'prototype.db', location: 'default' }, 
@@ -124,9 +123,11 @@ export class UserSettings {
 
                 .then( (res) => { 
 
-                    alert('AFTER_* ' + JSON.stringify(res));
+                    // alert('AFTER_* ' + 
+                    // JSON.stringify( res.rows.item(0).rowid + 
+                    // ' :DATA_ ' +  res.rows.item(0) ));
 
-                    if(res.rows.length > 0){
+                    if(res.rows.item(0).email){
                         
                         db.executeSql(`SELECT rowid, email, fullname, password, gender, description
                                         FROM users`, [])
@@ -145,14 +146,14 @@ export class UserSettings {
                             }
                             resolve(collections);
                         })
-                        .catch( (e) => {  alert('SELECT_ERROR ' + JSON.stringify(e)); reject(new Error(e)); });
+                        .catch( (e) => {  alert('SELECT_ERROR2 ' + JSON.stringify(e)); reject(new Error(e)); });
 
                     } else {
                         resolve(collections);
                     }
 
                  })
-                .catch( (e) => { alert('SELECT_ERROR ' + JSON.stringify(e) ) });
+                .catch( (e) => { /*alert('SELECT_ERROR1 ' + JSON.stringify(e) )*/ });
             
             })
             .catch( (e)=> { alert('DB_CONN_ERROR ' + JSON.stringify(e)); reject(new Error(e)); });

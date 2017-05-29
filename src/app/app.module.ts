@@ -1,7 +1,7 @@
 import { FormsModule } from '@angular/forms';
 import { HomePage } from '../pages/home/home';
 import { SQLite } from '@ionic-native/sqlite';
-import { UserSettings } from '../shared/shared';
+import { UserSettings, CameraSettings } from '../shared/shared';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
@@ -40,6 +40,7 @@ import { UserPopOverPage } from '../pages/user-pop-over/user-pop-over';
     StatusBar,
     SplashScreen,
     UserSettings,
+    CameraSettings,
     SQLite,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

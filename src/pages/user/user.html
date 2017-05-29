@@ -30,6 +30,8 @@
             (ngSubmit)="toggleAddUser(formGroup.value)">
 
         <ion-list>
+          <button ion-button type="button"
+                  (click)="toggleActionSheetImage">Upload Image</button>
 
           <ion-item>
             <ion-label stacked>Full Name <span *ngIf="!hasFullName" class="msg-error">*You must include a full name</span></ion-label>

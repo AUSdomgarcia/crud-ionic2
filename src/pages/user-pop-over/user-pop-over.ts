@@ -1,4 +1,3 @@
-import { HomePage } from '../home/home';
 import { UserPage } from '../user/user';
 import { UserSettings } from '../../shared/shared';
 import { Component } from '@angular/core';

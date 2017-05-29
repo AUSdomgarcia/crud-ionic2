@@ -1,9 +1,7 @@
-import { UserDetailsPage } from '../user-details/user-details';
-import { HomePage } from '../home/home';
 import { UserSettings } from '../../shared/shared';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Component } from '@angular/core';
-import { Events, IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { ActionSheetController, Events, IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 
 /**
  * Generated class for the UserPage page.
@@ -12,7 +10,6 @@ import { Events, IonicPage, NavController, NavParams, ViewController } from 'ion
  * on Ionic pages and navigation.
  */
 
-ViewController
 @IonicPage()
 @Component({
   selector: 'page-user',
@@ -25,7 +22,7 @@ export class UserPage {
   hasFullName: Boolean = true;
   hasEmail: Boolean = true;
   hasGender: Boolean = true;
-  hasPassword: Boolean = true;
+  hasPassword: Boolean = true; 
   hasDescription: Boolean = true;
 
   isEditing: Boolean = false;
@@ -37,7 +34,8 @@ export class UserPage {
               public navParams: NavParams,
               private formBuilder: FormBuilder,
               private userSettings: UserSettings,
-              private events: Events) {
+              private events: Events,
+              private actionSheetCtrl: ActionSheetController) {
 
                 this.formGroup = this.formBuilder.group({
                   fullname : [null, [Validators.required]],
@@ -46,6 +44,7 @@ export class UserPage {
                   password : [null, [Validators.required]],
                   description: [null, [Validators.required]]
                 });
+
               }
   
   toggleAddUser(formData){
@@ -123,6 +122,10 @@ export class UserPage {
 
   toggleDone(formData){
     this.toggleAddUser(formData);
+  }
+
+  toggleActionSheetImage(){
+    
   }
 
 }
