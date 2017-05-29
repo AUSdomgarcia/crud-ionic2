@@ -1,7 +1,15 @@
-import { UserSettings } from '../../shared/shared';
+import { UserSettings, CameraSettings } from '../../shared/shared';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Component } from '@angular/core';
-import { ActionSheetController, Events, IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import {
+    ActionSheetController,
+    Events,
+    IonicPage,
+    NavController,
+    NavParams,
+    Platform,
+    ViewController
+} from 'ionic-angular';
 
 /**
  * Generated class for the UserPage page.
@@ -26,6 +34,9 @@ export class UserPage {
   hasDescription: Boolean = true;
 
   isEditing: Boolean = false;
+
+  pictureURL = "";
+
   rowid;
   user;
 
@@ -35,7 +46,9 @@ export class UserPage {
               private formBuilder: FormBuilder,
               private userSettings: UserSettings,
               private events: Events,
-              private actionSheetCtrl: ActionSheetController) {
+              private actionSheetCtrl: ActionSheetController,
+              public platform: Platform,
+              private cameraSettings: CameraSettings) {
 
                 this.formGroup = this.formBuilder.group({
                   fullname : [null, [Validators.required]],
@@ -69,24 +82,31 @@ export class UserPage {
             
             this.navCtrl.pop();
 
+            // alert('FOO_UPDATE_USER');
+
             this.events.publish('user:added');
 
             this.events.publish('userdetails:updated', res );
 
           })
           .catch( (e) => { 
-            alert('IS_EDITING ' + JSON.stringify(e))
+            alert('UPDATE_USER_ERR ' + JSON.stringify(e))
           });
 
       } else {
         // alert('to save');
         this.userSettings.addUser(formData)
           .then( (res) => {
+
+            // alert('FOO_ADDING_USER');
+            
             this.events.publish('user:added');
+            
             this.navCtrl.pop();
+
           })
           .catch( (e) => { 
-            alert('IS_ADDING ' + JSON.stringify(e))
+            alert('ADD_USER_ERR ' + JSON.stringify(e))
           });
       }
     }
@@ -119,13 +139,41 @@ export class UserPage {
   toggleCancel(){
     this.navCtrl.pop();
   }
-
+  
   toggleDone(formData){
     this.toggleAddUser(formData);
   }
 
-  toggleActionSheetImage(){
-    
+  toggleActionSheetImage(event){
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Set image from',
+      buttons: [
+        {
+          text: 'Camera',
+          icon: !this.platform.is('ios') ? 'camera' : null,
+          handler: () => {
+            this.cameraSettings.useCamera();
+          }
+        },
+        {
+          text: 'Gallery',
+          icon: !this.platform.is('ios') ? 'images' : null,
+          handler: () => {
+            this.cameraSettings.useGallery();
+          }
+        },
+        {
+          text: 'Cancel',
+          icon: !this.platform.is('ios') ? 'close' : null,
+          role: 'cancel',
+          handler: () => {
+            //
+          }
+        }
+      ]
+    });
+
+    actionSheet.present();
   }
 
 }

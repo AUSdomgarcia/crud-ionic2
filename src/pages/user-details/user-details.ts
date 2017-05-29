@@ -39,12 +39,17 @@ export class UserDetailsPage {
     // subscribe 
     this.popOverSubscribe = () => {
       this.leaveAfterDelete();
+
     }
     this.events.subscribe('user:popover', this.popOverSubscribe);
+
     // subscribe 
     this.userDetailsSubscribe = (res) => {
+
       this.onUserDetailsUpdate(res);
+
       this.showUpdateToaster();
+
     }
     this.events.subscribe('userdetails:updated', this.userDetailsSubscribe );
   }
@@ -86,8 +91,6 @@ export class UserDetailsPage {
 
     toaster.present();
 
-    this.events.publish('user:added');
-    
     this.navCtrl.pop();
   }
 

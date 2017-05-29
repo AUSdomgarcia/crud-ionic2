@@ -40,6 +40,7 @@ export class UserPopOverPage {
             this.userSettings.deleteUser(this.navParams.data.rowid)
             .then( () => {
               
+              this.events.publish('user:deleted');
               this.events.publish('user:popover');
 
             });

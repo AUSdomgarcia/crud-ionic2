@@ -39,7 +39,7 @@ export class UserSettings {
     }
     
     initSQLite(isNative){
-        this.truncateDB();
+        // this.truncateDB();
 
         if(isNative){
             this.sqlite.create({
@@ -94,7 +94,6 @@ export class UserSettings {
                             formData['description']
                         ])
                         .then(() => { 
-                            this.events.publish('user:added');
                             resolve();
                         })
                         .catch( (e) => {
@@ -123,11 +122,9 @@ export class UserSettings {
 
                 .then( (res) => { 
 
-                    // alert('AFTER_* ' + 
-                    // JSON.stringify( res.rows.item(0).rowid + 
-                    // ' :DATA_ ' +  res.rows.item(0) ));
+                    // alert('GET_USERS ' + res.rows.item(0));
 
-                    if(res.rows.item(0).email){
+                    if(res.rows.item(0)){
                         
                         db.executeSql(`SELECT rowid, email, fullname, password, gender, description
                                         FROM users`, [])
@@ -149,6 +146,7 @@ export class UserSettings {
                         .catch( (e) => {  alert('SELECT_ERROR2 ' + JSON.stringify(e)); reject(new Error(e)); });
 
                     } else {
+                        collections = [];
                         resolve(collections);
                     }
 

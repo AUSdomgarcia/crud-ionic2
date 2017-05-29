@@ -24,13 +24,17 @@ export class HomePage {
   ionViewDidLoad() {
     this.events.subscribe('user:added', () => this.updateUsers() );
 
-    this.events.subscribe('user:updated', () => this.updateUsers() );
-    
+    this.events.subscribe('user:deleted', () => this.updateUsers() );
+
     this.updateUsers();
   }
   
   updateUsers(){
-    this.userSettings.getUsers().then( (users) => { this.users = users } );
+    this.userSettings.getUsers().then( (users) => { 
+      // alert('HOME_UPDATE ' + JSON.stringify(users));
+      this.users = users;
+
+    });
   }
 
   showUser(user){

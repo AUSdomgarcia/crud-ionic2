@@ -12,6 +12,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { UserPage } from '../pages/user/user';
 import { UserDetailsPage } from '../pages/user-details/user-details';
 import { UserPopOverPage } from '../pages/user-pop-over/user-pop-over';
+import { Camera } from '@ionic-native/camera';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { UserPopOverPage } from '../pages/user-pop-over/user-pop-over';
     StatusBar,
     SplashScreen,
     UserSettings,
+    Camera,
     CameraSettings,
     SQLite,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
