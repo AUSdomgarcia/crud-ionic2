@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Camera, CameraOptions } from '@ionic-native/camera';
-
+import { File } from '@ionic-native/file';
 
 @Injectable()
 
@@ -8,7 +8,24 @@ export class CameraSettings {
 
     imageSrc: any;
 
-    constructor(private camera: Camera){}
+    constructor(private camera: Camera, 
+                private file: File){}
+
+    initFileDirectory(platform){
+        if(platform.is('ios')){
+            //
+        }
+        
+        if(platform.is('android')){
+            this.file.checkDir(this.file.dataDirectory, 'crudPrototype')
+            .then( () => {
+                alert('EXISTS');
+            })
+            .catch( () => {
+                alert('NOT EXISTS');
+            });
+        }
+    }
 
     useGallery(){
         let cameraOptions = {
