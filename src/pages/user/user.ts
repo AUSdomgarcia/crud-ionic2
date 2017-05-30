@@ -35,10 +35,11 @@ export class UserPage {
 
   isEditing: Boolean = false;
 
-  pictureURL = "";
+  imgSrc;
 
   rowid;
   user;
+
 
   constructor(public navCtrl: NavController, 
               private viewCtrl: ViewController,
@@ -152,7 +153,7 @@ export class UserPage {
           text: 'Camera',
           icon: !this.platform.is('ios') ? 'camera' : null,
           handler: () => {
-            this.cameraSettings.useCamera();
+            this.openCamera();
           }
         },
         {
@@ -176,4 +177,15 @@ export class UserPage {
     actionSheet.present();
   }
 
+  openCamera(){
+    this.cameraSettings.useCamera()
+    .then( (uri) => {
+      this.cameraSettings.toBase64(uri)
+        .then( (base64) => { 
+          this.imgSrc = base64;
+        })
+        .catch( (err) => { alert('USER_TO_BASE64_ERR ' + JSON.stringify(err) ) });
+    })
+    .catch( (err) => { alert('USER_OPEN_CAMERA_ERR ' + JSON.stringify(err))} );
+  }
 }

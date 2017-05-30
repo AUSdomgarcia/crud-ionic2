@@ -19,15 +19,17 @@
     
     <ion-card-content>
     
-      <ion-list>
+      <ion-list *ngIf="!isEmpty(users)">
 
         <button ion-item 
             *ngFor="let user of users; let i = index" 
             (click)="showUser(user)">
             
           <ion-avatar item-left>
-            <img src="assets/uploads/user.jpg">
+            <!--<img src="assets/uploads/user.jpg">-->
+            <img src="{{imgSrc}}" alt="User photo">
           </ion-avatar>
+          
           <h2>{{user?.fullname}}</h2>
           <p>{{user?.description}}</p>
           <p>{{user?.email}}</p>
@@ -38,8 +40,6 @@
     </ion-card-content>
     <!--END:CARD-->
   </ion-card>
-
-  
 
 <!--END:CONTENT-->
 </ion-content>

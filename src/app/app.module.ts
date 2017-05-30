@@ -1,18 +1,23 @@
-import { FormsModule } from '@angular/forms';
-import { HomePage } from '../pages/home/home';
-import { SQLite } from '@ionic-native/sqlite';
-import { UserSettings, CameraSettings } from '../shared/shared';
-import { NgModule, ErrorHandler } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { MyApp } from './app.component';
-import { LoginPage } from '../pages/login/login';
+import { Camera } from '@ionic-native/camera';
+import { File } from '@ionic-native/file';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { SQLite } from '@ionic-native/sqlite';
+
+import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { NgModule, ErrorHandler } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { HomePage } from '../pages/home/home';
+import { MyApp } from './app.component';
+import { UserSettings, CameraSettings } from '../shared/shared';
+
+import { LoginPage } from '../pages/login/login';
 import { UserPage } from '../pages/user/user';
 import { UserDetailsPage } from '../pages/user-details/user-details';
 import { UserPopOverPage } from '../pages/user-pop-over/user-pop-over';
-import { Camera } from '@ionic-native/camera';
+import { StartupPage } from '../pages/startup/startup';
 
 @NgModule({
   declarations: [
@@ -21,7 +26,8 @@ import { Camera } from '@ionic-native/camera';
     HomePage,
     UserPage,
     UserDetailsPage,
-    UserPopOverPage
+    UserPopOverPage,
+    StartupPage
   ],
   imports: [
     BrowserModule,
@@ -35,15 +41,17 @@ import { Camera } from '@ionic-native/camera';
     HomePage,
     UserPage,
     UserDetailsPage,
-    UserPopOverPage
+    UserPopOverPage,
+    StartupPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     UserSettings,
+    SQLite,
     Camera,
     CameraSettings,
-    SQLite,
+    File,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

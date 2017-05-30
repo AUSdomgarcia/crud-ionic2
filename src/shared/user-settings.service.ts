@@ -1,6 +1,6 @@
-import { Events } from 'ionic-angular';
-import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
+import { Injectable } from '@angular/core';
+import { Events } from 'ionic-angular';
 
 @Injectable()
 
@@ -20,7 +20,7 @@ export class UserSettings {
             })
             .catch( (e) => alert('TRUNC_ERROR ' + JSON.stringify(e)) );
         })
-        .catch( (e)=> { alert('DB_CONN_ERROR ' + JSON.stringify(e)) });
+        .catch( (e)=> { alert('DB_CONN_ERROR_TRUNC ' + JSON.stringify(e)) });
     }
 
     dropTable(){
@@ -35,7 +35,7 @@ export class UserSettings {
             })
             .catch( (e) => { alert('DROP_ERROR ' + JSON.stringify(e)) } );
         })
-        .catch( (e)=> { alert('DB_CONN_ERROR ' + JSON.stringify(e)) });
+        .catch( (e)=> { alert('DB_CONN_ERROR_DROP ' + JSON.stringify(e)) });
     }
     
     initSQLite(isNative){
@@ -61,7 +61,7 @@ export class UserSettings {
                         })
                         .catch( (e) => alert('CREATE_ERROR ' + JSON.stringify(e)) );
             })
-            .catch( (e)=> { alert('DB_CONN_ERROR' + JSON.stringify(e)) });
+            .catch( (e)=> { alert('DB_CONN_ERROR_INIT ' + JSON.stringify(e)) });
         }
         
         if( ! isNative){
@@ -102,7 +102,7 @@ export class UserSettings {
                         });
             })
             .catch( (e)=> { 
-                alert('DB_CONN_ERROR ' + JSON.stringify(e));
+                alert('DB_CONN_ERROR_ADD ' + JSON.stringify(e));
                 reject();
             });
         });
@@ -119,7 +119,7 @@ export class UserSettings {
             .then( (db: SQLiteObject) => {
                 
                 db.executeSql(`SELECT * FROM users`, [])
-
+                
                 .then( (res) => { 
 
                     // alert('GET_USERS ' + res.rows.item(0));
@@ -143,7 +143,7 @@ export class UserSettings {
                             }
                             resolve(collections);
                         })
-                        .catch( (e) => {  alert('SELECT_ERROR2 ' + JSON.stringify(e)); reject(new Error(e)); });
+                        .catch( (e) => {  alert('SELECT_ERROR2 ' + JSON.stringify(e)); reject(/*new Error(e)*/); });
 
                     } else {
                         collections = [];
@@ -154,7 +154,7 @@ export class UserSettings {
                 .catch( (e) => { /*alert('SELECT_ERROR1 ' + JSON.stringify(e) )*/ });
             
             })
-            .catch( (e)=> { alert('DB_CONN_ERROR ' + JSON.stringify(e)); reject(new Error(e)); });
+            .catch( (e)=> { alert('DB_CONN_ERROR_GET ' + JSON.stringify(e)); reject(/*new Error(e)*/); });
         
         });
     }
@@ -176,7 +176,7 @@ export class UserSettings {
                 .catch( (e) => { alert('SHOW_ERROR ' + JSON.stringify(e)); reject(new Error(e)); });
             
             })
-            .catch( (e)=> { alert('DB_CONN_ERROR ' + JSON.stringify(e)); reject(new Error(e)); });
+            .catch( (e)=> { alert('DB_CONN_ERROR_SHOW ' + JSON.stringify(e)); reject(new Error(e)); });
         });
     }
 
@@ -202,7 +202,7 @@ export class UserSettings {
                 });
             })
             .catch( (e)=> { 
-                alert('DB_CONN_ERROR ' + JSON.stringify(e)) 
+                alert('DB_CONN_ERROR_DELETE ' + JSON.stringify(e)) 
                 reject( JSON.stringify(e) );
             });
         });
@@ -251,7 +251,7 @@ export class UserSettings {
             })
 
             .catch( (e)=> { 
-                alert('DB_CONN_ERROR ' + JSON.stringify(e));
+                alert('DB_CONN_ERROR_UPDATE ' + JSON.stringify(e));
                 reject();
             });
         });
