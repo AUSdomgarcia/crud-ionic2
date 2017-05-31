@@ -26,7 +26,7 @@ export class CameraSettings {
 
             .then( () => {
                 this.fullPath = path + UPLOADS_FOLDER;
-                alert(this.fullPath);
+                // alert('CAMERA_SETTING_ERR ' + this.fullPath);
                 // List files inside uploads folder
                 this.file.listDir(path, UPLOADS_FOLDER)
                     .then( (res) => { 

@@ -86,7 +86,7 @@ export class UserPage {
       if(this.isEditing){
 
         formData['pictureURL'] = this.rawPath;
-        
+
         this.userSettings.updateUser(this.rowid, formData)
 
           .then( (res) => { 
@@ -107,8 +107,7 @@ export class UserPage {
       } else {
         // alert('to save');
         formData['pictureURL'] = this.rawPath;
-
-        alert('WHEN SUBMIT ' + JSON.stringify(formData));
+        // alert('WHEN SUBMIT ' + JSON.stringify(formData));
         
         this.userSettings.addUser(formData)
           .then( (res) => {

@@ -35,36 +35,40 @@ export class HomePage {
   
   updateUsers(){
     this.userSettings.getUsers().then( (users: any) => {
-      let promises = [];
 
-      users.map( (user) => {
-        ///
-        // alert('HOME.TS CHECK URL ' +  user.pictureURL );
+      if(users.length !== 0 ){
+          let promises = [];
+          users.map( (user) => {
+            ///
+            // alert('HOME.TS CHECK URL ' +  user.pictureURL );
 
-        if(user.pictureURL.includes('assets')){
-            promises.push(user.pictureURL);
-        } else {
-           promises.push(
-            this.file.readAsDataURL(
-            user.pictureURL.substring(0, user.pictureURL.lastIndexOf('/') + 1),
-            this.getFileName(user.pictureURL) + '.' + this.getFileExtension(user.pictureURL))
-          );
-        }
-       ///
-      })
-
-      Promise.all(promises)
-        .then( (responses) => {
-          responses.map((responseUrl, index, arr) => {
-            users[index].fixURL = responseUrl;
-            if(index === arr.length -1){
-              this.users = users;
+            if(user.pictureURL.includes('assets')){
+                promises.push(user.pictureURL);
+            } else {
+              promises.push(
+                this.file.readAsDataURL(
+                user.pictureURL.substring(0, user.pictureURL.lastIndexOf('/') + 1),
+                this.getFileName(user.pictureURL) + '.' + this.getFileExtension(user.pictureURL))
+              );
             }
-          });
-        })
-        .catch( (err) => {
-          alert('HOME.TS_ERR ' +  JSON.stringify(err))
-        });
+          ///
+          })
+          Promise.all(promises)
+            .then( (responses) => {
+              responses.map((responseUrl, index, arr) => {
+                users[index].fixURL = responseUrl;
+                if(index === arr.length -1){
+                  this.users = users;
+                }
+              });
+            })
+            .catch( (err) => {
+              alert('HOME.TS_ERR ' +  JSON.stringify(err))
+            });
+      
+      } else {
+        this.users = [];
+      }
     });
   }
   
