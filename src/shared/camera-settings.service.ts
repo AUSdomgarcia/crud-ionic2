@@ -7,7 +7,6 @@ import { UserSettings } from './user-settings.service';
 
 export class CameraSettings {
 
-    imageSrc: any;
     fullPath: string;
 
     constructor(private camera: Camera, 
@@ -27,9 +26,7 @@ export class CameraSettings {
 
             .then( () => {
                 this.fullPath = path + UPLOADS_FOLDER;
-
                 alert(this.fullPath);
-
                 // List files inside uploads folder
                 this.file.listDir(path, UPLOADS_FOLDER)
                     .then( (res) => { 
@@ -53,26 +50,84 @@ export class CameraSettings {
     }
     
     useGallery(){
-        let opts = {
-            sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-            destinationType: this.camera.DestinationType.FILE_URI, // instead of DATA_URL    
-            quality: 100,
-            targetWidth: 1000,
-            targetHeight: 1000,
-            encodingType: this.camera.EncodingType.JPEG,      
-            correctOrientation: true
-        }
+        return new Promise((resolve, reject) => {
+            //////////////
+            let opts = {
+                sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+                encodingType: this.camera.EncodingType.JPEG,   
+                destinationType: this.camera.DestinationType.FILE_URI, // instead of DATA_URL    
+                quality: 100,
+                targetWidth: 100,
+                targetHeight: 100,
+                correctOrientation: true,
+                allowEdit: true
+            };
+            this.camera.getPicture(opts)
+                .then( 
+                (uri) => {
+                    const _extension = '.' + this.getFileExtension(uri);
+                    const path = uri.substring(0, uri.lastIndexOf('/') + 1);
+                    const name = this.getFileName(uri) + _extension;
+                    const newPath = this.fullPath + '/';
+                    const newName = 'gallery_' + this.hashName() + _extension;
 
-        this.camera.getPicture(opts)
-            .then( 
-            (uri) => {
-                this.imageSrc = uri;
-                // alert('>> ' + uri);
-            }, 
-            
-            (err) => {
-                alert('GALLERY_REJECTED ' + JSON.stringify(err))
-            }).catch(e => alert('GALLERY_ERR ' + JSON.stringify(e) ) );   
+                    this.file.copyFile(path, name, newPath, newName)
+                    .then( (res) => {
+                        resolve(res.nativeURL);
+                    })
+                    .catch( (err) => {
+                        alert('COPY_FILE_GALLERY_ERR ' + JSON.stringify(err));
+                        reject(err);
+                    });
+                }, 
+                (err) => {
+                    // alert('GALLERY_REJECTED ' + JSON.stringify(err));
+                    // Sendings action gallery were cancelled
+                    reject(err);
+                })
+            //////////////
+        });
+    }
+
+    useCamera(){
+        return new Promise( (resolve, reject) => {
+            //////////
+            const opts: CameraOptions = {
+                quality: 100,
+                // destinationType: this.camera.DestinationType.DATA_URL,
+                mediaType: this.camera.MediaType.PICTURE,
+                encodingType: this.camera.EncodingType.JPEG,
+                destinationType: this.camera.DestinationType.FILE_URI,
+                allowEdit: true,
+                targetWidth: 100,
+                targetHeight: 100,
+                correctOrientation: true,
+                saveToPhotoAlbum: false
+            };
+
+            this.camera.getPicture(opts).then((uri) => {
+                const _extension = '.' + this.getFileExtension(uri);
+                const path = uri.substring(0, uri.lastIndexOf('/') + 1);
+                const name = this.getFileName(uri) + _extension;
+                const newPath = this.fullPath + '/';
+                const newName = 'camera_' + this.hashName() + _extension;
+                
+                this.file.copyFile(path, name, newPath, newName)
+                    .then( (res) => {
+                        resolve(res.nativeURL);
+                    })
+                    .catch( (err) => {
+                        alert('COPY_FILE_CAMERA_ERR ' + JSON.stringify(err));
+                        reject(err);
+                    });
+
+                }, (err) => {
+                    // alert('USE_CAMERA_PROMISE_ERR ' + JSON.stringify(err));
+                    // Sending action that camera were cancelled.
+                    reject(err);
+                });
+            //////////
+        });
     }
 
     toBase64(uri){
@@ -80,68 +135,16 @@ export class CameraSettings {
         const filename = this.getFileName(uri) + '.' + this.getFileExtension(uri);
         return this.file.readAsDataURL(path, filename);
     }
-
-    useCamera(){
-        return new Promise( (resolve, reject) => {
-            //////////
-            const opts: CameraOptions = {
-            quality: 100,
-                // destinationType: this.camera.DestinationType.DATA_URL,
-                destinationType: this.camera.DestinationType.FILE_URI,
-                encodingType: this.camera.EncodingType.JPEG,
-                mediaType: this.camera.MediaType.PICTURE
-            };
-
-            this.camera.getPicture(opts).then((uri) => {
-
-                const _extension = '.' + this.getFileExtension(uri);
-                const originalName = this.getFileName(uri) + _extension;
-                const dir = uri.substring(0, uri.lastIndexOf('/') + 1);
-
-                this.file.resolveDirectoryUrl(dir)
-                        .then( (directoryUrl) => {
-                            const path = directoryUrl.nativeURL; // uri.substring(0, uri.lastIndexOf('/') + 1);
-                            const name = originalName;
-                            const newPath = this.fullPath + '/';
-                            const newName = 'camera_' + this.hashGenerator() + _extension;
-                            
-                            this.file.copyFile(path, name, newPath, newName)
-                                .then( (res) => {
-                                    // alert('COPY_SUCCESS ' + JSON.stringify(res));
-                                    resolve(res.nativeURL);
-                                })
-                                .catch( (err) => {
-                                
-                                    alert('COPY_ERR ' + JSON.stringify(err));
-                                
-                                    reject();
-                                });
-                        })
-                        .catch( (err) => {
-
-                            alert('RESOLVE_ERR ' + JSON.stringify(err));
-
-                            reject();
-
-                        });
-
-            }, (err) => {
-                // Handle error
-                reject();
-            });
-            //////////
-        });
-    }
     
-    hashGenerator(): string {
-        let randomId = '';
+    hashName(): string {
+        let chars = '';
         let limit = 8;
         let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
         for (var i=0; i < limit; i++) {
-            randomId += possible.charAt(Math.floor(Math.random() * possible.length));
+            chars += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-        return randomId;
+        return chars;
     }
 
     getFileExtension = function(url) {

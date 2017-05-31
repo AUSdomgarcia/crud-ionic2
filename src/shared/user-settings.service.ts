@@ -53,7 +53,8 @@ export class UserSettings {
                             fullname TEXT NOT NULL,
                             password TEXT NOT NULL,
                             gender TEXT NOT NULL,
-                            description TEXT NOT NULL
+                            description TEXT NOT NULL,
+                            pictureURL TEXT NOT NULL
                         )`, [])
 
                         .then(() => { 
@@ -85,13 +86,14 @@ export class UserSettings {
             })
             .then( (db: SQLiteObject) => {
                 db.executeSql(
-                        `INSERT INTO users VALUES (?, ?, ?, ?, ?)`,
+                        `INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)`,
                         [
                             formData['email'],
                             formData['fullname'],
                             formData['password'],
                             formData['gender'],
-                            formData['description']
+                            formData['description'],
+                            formData['pictureURL']
                         ])
                         .then(() => { 
                             resolve();
@@ -126,7 +128,7 @@ export class UserSettings {
 
                     if(res.rows.item(0)){
                         
-                        db.executeSql(`SELECT rowid, email, fullname, password, gender, description
+                        db.executeSql(`SELECT rowid, email, fullname, password, gender, description, pictureURL
                                         FROM users`, [])
 
                         .then( (result) => {
@@ -138,7 +140,8 @@ export class UserSettings {
                                         fullname: result.rows.item(i).fullname,
                                         password: result.rows.item(i).password,
                                         gender: result.rows.item(i).gender,
-                                        description: result.rows.item(i).description
+                                        description: result.rows.item(i).description,
+                                        pictureURL: result.rows.item(i).pictureURL
                                     });
                             }
                             resolve(collections);
@@ -166,7 +169,7 @@ export class UserSettings {
                 location: 'default'
             })
             .then( (db: SQLiteObject) => {
-                db.executeSql(`SELECT rowid, email, fullname, password, gender, description
+                db.executeSql(`SELECT rowid, email, fullname, password, gender, description, pictureURL
                                FROM users
                                WHERE rowid = ?`, 
                                [rowid] )
@@ -221,7 +224,8 @@ export class UserSettings {
                                     fullname = ?,
                                     password = ?,
                                     gender = ?,
-                                    description = ?
+                                    description = ?,
+                                    pictureURL = ?
                                 WHERE rowid = ?`, 
                                 [
                                     formData['email'],
@@ -229,6 +233,7 @@ export class UserSettings {
                                     formData['password'],
                                     formData['gender'],
                                     formData['description'],
+                                    formData['pictureURL'],
                                     rowid
                                 ] )
 
@@ -240,6 +245,7 @@ export class UserSettings {
                             password: formData['password'],
                             gender: formData['gender'],
                             description: formData['description'],
+                            pictureURL: formData['pictureURL'],
                             rowid: rowid
                         }
                     );

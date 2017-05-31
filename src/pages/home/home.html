@@ -4,44 +4,26 @@
           <ion-icon name="menu"></ion-icon>
       </button>
       <ion-title>Contacts</ion-title>
-
   </ion-navbar>
 </ion-header>
 
 <!--START:CONTENT-->
-<ion-content>
-
-  <!--START:CARD-->
-  <ion-card>
-    <ion-card-header>
-      My Contacts
-    </ion-card-header>
-    
-    <ion-card-content>
-    
-      <ion-list *ngIf="!isEmpty(users)">
-
-        <button ion-item 
-            *ngFor="let user of users; let i = index" 
-            (click)="showUser(user)">
-            
-          <ion-avatar item-left>
-            <!--<img src="assets/uploads/user.jpg">-->
-            <img src="{{imgSrc}}" alt="User photo">
-          </ion-avatar>
-          
-          <h2>{{user?.fullname}}</h2>
-          <p>{{user?.description}}</p>
-          <p>{{user?.email}}</p>
-        </button>
+<ion-content padding>
+  <ion-list> <!-- *ngIf="!isEmpty(users)"-->
+    <button ion-item 
+        *ngFor="let user of users; let i = index" 
+        (click)="showUser(user)">
         
-      </ion-list>
+      <ion-thumbnail item-left>
+        <img src="{{ user?.fixURL }}" alt="User photo">
+      </ion-thumbnail>
+      <!--<h3>{{ user?.fixURL }}</h3>-->
+      <h2>{{user?.fullname}}</h2>
+      <p>{{user?.description}}</p>
+      <p>{{user?.email}}</p>
+    </button>
     
-    </ion-card-content>
-    <!--END:CARD-->
-  </ion-card>
-
-<!--END:CONTENT-->
+  </ion-list>
 </ion-content>
 
 <div class="fixed-outsite">

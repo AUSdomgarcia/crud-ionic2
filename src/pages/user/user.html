@@ -31,13 +31,32 @@
 
         <ion-list>
 
-          <ion-avatar item-left>
-            <img src="{{imgSrc}}" alt="User photo">
-          </ion-avatar>
+          <ion-grid>
+            <ion-row>
+              <ion-col col-5>
+                <ion-item-divider>
 
-          <button ion-button type="button"
-                  (click)="toggleActionSheetImage($event)">Upload Image</button>
+                  <ion-thumbnail item-left>
+                    <img src="{{imgSrc}}" 
+                      alt="User photo"
+                      name="pictureURL"
+                      >
+                  </ion-thumbnail>
 
+                </ion-item-divider>
+              </ion-col>
+
+              <ion-col col-7>
+                <button 
+                  ion-button 
+                  type="button"
+                  item-left
+                  (click)="toggleActionSheetImage($event)"
+                  >Upload</button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>        
+          
           <ion-item>
             <ion-label stacked>Full Name <span *ngIf="!hasFullName" class="msg-error">*You must include a full name</span></ion-label>
             <ion-input type="text"

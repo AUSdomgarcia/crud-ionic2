@@ -30,12 +30,17 @@ export class UserPage {
   hasFullName: Boolean = true;
   hasEmail: Boolean = true;
   hasGender: Boolean = true;
+  hasPictureURL: Boolean = true;
   hasPassword: Boolean = true; 
   hasDescription: Boolean = true;
 
   isEditing: Boolean = false;
 
-  imgSrc;
+  DEFAULT_URL = 'assets/uploads/user.jpg';
+
+  imgSrc = this.DEFAULT_URL;
+  
+  rawPath: string = this.DEFAULT_URL;
 
   rowid;
   user;
@@ -56,7 +61,8 @@ export class UserPage {
                   email : [null, [Validators.required, Validators.email]],
                   gender: ['select', [Validators.required]],
                   password : [null, [Validators.required]],
-                  description: [null, [Validators.required]]
+                  description: [null, [Validators.required]],
+                  pictureURL: [this.DEFAULT_URL, [Validators.required]]
                 });
 
               }
@@ -73,10 +79,14 @@ export class UserPage {
     
     this.hasDescription = (this.formGroup.controls['description'].valid) ? true : false;
 
-    if(this.formGroup.valid && this.hasGender){
+    this.hasPictureURL = true;
+
+    if(this.formGroup.valid && this.hasGender && this.hasPictureURL){
 
       if(this.isEditing){
 
+        formData['pictureURL'] = this.rawPath;
+        
         this.userSettings.updateUser(this.rowid, formData)
 
           .then( (res) => { 
@@ -96,15 +106,14 @@ export class UserPage {
 
       } else {
         // alert('to save');
+        formData['pictureURL'] = this.rawPath;
+
+        alert('WHEN SUBMIT ' + JSON.stringify(formData));
+        
         this.userSettings.addUser(formData)
           .then( (res) => {
-
-            // alert('FOO_ADDING_USER');
-            
             this.events.publish('user:added');
-            
             this.navCtrl.pop();
-
           })
           .catch( (e) => { 
             alert('ADD_USER_ERR ' + JSON.stringify(e))
@@ -120,13 +129,32 @@ export class UserPage {
 
       if(this.navParams.data.hasOwnProperty(prop)){
         this.isEditing = true;
+
         this.user = this.navParams.data;
+        // alert('ON_EDIT ' + JSON.stringify(this.user));
         
         this.formGroup.controls['fullname'].setValue(this.user.fullname);
         this.formGroup.controls['email'].setValue(this.user.email);
         this.formGroup.controls['gender'].setValue(this.user.gender);
         this.formGroup.controls['password'].setValue(this.user.password);
         this.formGroup.controls['description'].setValue(this.user.description);
+        this.formGroup.controls['pictureURL'].setValue(this.user.pictureURL);
+
+        this.rawPath = this.user.pictureURL;
+
+        if( ! this.user.pictureURL.includes('assets')){
+          this.cameraSettings.toBase64(this.user.pictureURL)
+            .then( (res) => {
+              this.imgSrc = res;
+            })
+            .catch( (err) => { 
+              alert('USER_EDIT_ERR ' + JSON.stringify(err))
+            });
+
+        } else {
+          this.imgSrc = this.user.pictureURL;
+        }
+
         this.rowid = this.navParams.data.rowid;
 
         break;
@@ -151,21 +179,21 @@ export class UserPage {
       buttons: [
         {
           text: 'Camera',
-          icon: !this.platform.is('ios') ? 'camera' : null,
+          icon: ! this.platform.is('ios') ? 'camera' : null,
           handler: () => {
             this.openCamera();
           }
         },
         {
           text: 'Gallery',
-          icon: !this.platform.is('ios') ? 'images' : null,
+          icon: ! this.platform.is('ios') ? 'images' : null,
           handler: () => {
-            this.cameraSettings.useGallery();
+            this.openGallery();
           }
         },
         {
           text: 'Cancel',
-          icon: !this.platform.is('ios') ? 'close' : null,
+          icon: ! this.platform.is('ios') ? 'close' : null,
           role: 'cancel',
           handler: () => {
             //
@@ -180,12 +208,38 @@ export class UserPage {
   openCamera(){
     this.cameraSettings.useCamera()
     .then( (uri) => {
+
+      this.rawPath = uri.toString();
+
       this.cameraSettings.toBase64(uri)
         .then( (base64) => { 
           this.imgSrc = base64;
         })
-        .catch( (err) => { alert('USER_TO_BASE64_ERR ' + JSON.stringify(err) ) });
+        .catch( (err) => { 
+          alert('USER_TO_BASE64_ERR ' + JSON.stringify(err) ) 
+        });
     })
-    .catch( (err) => { alert('USER_OPEN_CAMERA_ERR ' + JSON.stringify(err))} );
+    .catch( (err) => { 
+      alert('USER_OPEN_CAMERA_ERR ' + JSON.stringify(err))
+    });
+  }
+
+  openGallery(){
+    this.cameraSettings.useGallery()
+    .then( (uri) => {
+
+      this.rawPath = uri.toString();
+
+      this.cameraSettings.toBase64(uri)
+        .then( (base64) => { 
+          this.imgSrc = base64;
+        })
+        .catch( (err) => { 
+          alert('USER_TO_BASE64_ERR ' + JSON.stringify(err) ) 
+        });
+    })
+    .catch( (err) => { 
+      alert('USER_OPEN_GALLERY_ERR ' + JSON.stringify(err) )
+    });
   }
 }

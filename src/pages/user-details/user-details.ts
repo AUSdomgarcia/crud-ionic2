@@ -1,3 +1,4 @@
+import { CameraSettings } from '../../shared/camera-settings.service';
 import { UserPage } from '../user/user';
 import { Component } from '@angular/core';
 import { Events, IonicPage, NavController, NavParams, PopoverController, ToastController } from 'ionic-angular';
@@ -20,6 +21,7 @@ import { UserPopOverPage } from '../user-pop-over/user-pop-over';
 export class UserDetailsPage {
 
   user: UserSchema;
+  imgSrc;
 
   popOverSubscribe: any;
 
@@ -29,7 +31,8 @@ export class UserDetailsPage {
               public navParams: NavParams,
               private popoverController: PopoverController,
               private events: Events,
-              private toastCtrl: ToastController) 
+              private toastCtrl: ToastController,
+              private cameraSettings: CameraSettings) 
 
               { }
               
@@ -56,10 +59,24 @@ export class UserDetailsPage {
 
   onUserDetailsUpdate(res){
     this.user = res;
+    this.updateImageSrc();
   }
 
   initData(){
     this.user = this.navParams.data;
+    this.updateImageSrc();
+  }
+  
+  updateImageSrc(){
+    if( ! this.user.pictureURL.includes('assets')){
+       this.cameraSettings.toBase64(this.user.pictureURL)
+      .then( (res) => {
+        this.imgSrc = res;
+      })
+      .catch( e => { alert('USER_DETAILS_ERR ' + JSON.stringify(e) )});
+    } else {
+      this.imgSrc = this.user.pictureURL;
+    }
   }
 
   showUpdateToaster(){
@@ -110,4 +127,5 @@ interface UserSchema {
   password;
   gender;
   description;
+  pictureURL;
 }
