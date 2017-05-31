@@ -98,7 +98,7 @@ export class CameraSettings {
                 mediaType: this.camera.MediaType.PICTURE,
                 encodingType: this.camera.EncodingType.JPEG,
                 destinationType: this.camera.DestinationType.FILE_URI,
-                allowEdit: true,
+                // allowEdit: true,
                 targetWidth: 100,
                 targetHeight: 100,
                 correctOrientation: true,
@@ -106,8 +106,20 @@ export class CameraSettings {
             };
 
             this.camera.getPicture(opts).then((uri) => {
-                const _extension = '.' + this.getFileExtension(uri);
+
                 const path = uri.substring(0, uri.lastIndexOf('/') + 1);
+
+                alert('NATIVE ' + uri);
+
+                this.file.resolveDirectoryUrl(path)
+                .then( (res) => { alert('resolveDirectoryUrl_SUC ' + JSON.stringify(res)) })
+                .catch( (err) => { alert('resolveDirectoryUrl_ERR ' + JSON.stringify(err) ) });
+
+                this.file.resolveLocalFilesystemUrl(path)
+                .then( (res) => { alert('resolveLocalFilesystemUrl_SUC ' + JSON.stringify(res)) })
+                .catch( (err) => { alert('resolveLocalFilesystemUrl_ERR ' + JSON.stringify(err) ) });
+
+                const _extension = '.' + this.getFileExtension(uri);
                 const name = this.getFileName(uri) + _extension;
                 const newPath = this.fullPath + '/';
                 const newName = 'camera_' + this.hashName() + _extension;
