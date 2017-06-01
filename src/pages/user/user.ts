@@ -206,22 +206,42 @@ export class UserPage {
 
   openCamera(){
     this.cameraSettings.useCamera()
-    .then( (uri) => {
-
-      this.rawPath = uri.toString();
-
-      this.cameraSettings.toBase64(uri)
-        .then( (base64) => { 
-          this.imgSrc = base64;
-        })
-        .catch( (err) => { 
-          alert('USER_TO_BASE64_ERR ' + JSON.stringify(err) ) 
-        });
+    .then( (cacheFile) => {
+      // this.rawPath = res.toString();
+      alert('USER.TS_OPEN_CAMERA_SUCC1 ' + JSON.stringify(cacheFile));
+      // Store
+      this.storeFile(cacheFile);
     })
-    .catch( (err) => { 
-      alert('USER_OPEN_CAMERA_ERR ' + JSON.stringify(err))
+    .catch( (err) => {
+      alert('USER.TS_OPEN_CAMERA_ERR ' + JSON.stringify(err))
     });
   }
+
+  storeFile(cacheFile){
+    alert('USER.TS ON_STORE ' + cacheFile);
+    
+    this.cameraSettings.moveFileToStorage(cacheFile)
+      .then( _ => {
+        this.rawPath = _.nativeURL.toString();
+        
+        // this.previewFile(_.nativeURL.toString());
+
+        alert('USER.TS MoveTo_STORED: ' + JSON.stringify(_));
+      })
+      .catch((err) => { 
+          alert('USER.TS MoveTo_ERR ' + JSON.stringify(err));
+      });
+  }
+
+  previewFile(cacheFile){
+    alert('GENERATE_PREVIEW ' + cacheFile);
+    
+    this.cameraSettings
+        .toBase64(cacheFile)
+        .then( (base64) => { this.imgSrc = base64; })
+        .catch( (err) => {  alert('USER.TS_TO_BASE64_ERR ' + JSON.stringify(err) ) });
+  }
+
 
   openGallery(){
     this.cameraSettings.useGallery()
