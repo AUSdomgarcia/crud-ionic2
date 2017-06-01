@@ -211,6 +211,8 @@ export class UserPage {
       alert('USER.TS_OPEN_CAMERA_SUCC1 ' + JSON.stringify(cacheFile));
       // Store
       this.storeFile(cacheFile);
+      // preview
+      this.previewFile(cacheFile);
     })
     .catch( (err) => {
       alert('USER.TS_OPEN_CAMERA_ERR ' + JSON.stringify(err))
