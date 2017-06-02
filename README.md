@@ -24,3 +24,11 @@ $ ionic cordova run ios
 
 Substitute ios for android if not on a Mac.
 
+
+
+
+https://stackoverflow.com/questions/41536303/cannot-read-a-file-using-cordova-file-plugin-in-an-ionic-2-project
+https://github.com/ionic-team/ionic-native/issues/657
+https://devdactic.com/how-to-capture-and-store-images-with-ionic/
+
+
