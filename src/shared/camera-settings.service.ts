@@ -1,14 +1,15 @@
-import { Camera, CameraOptions } from '@ionic-native/camera';
-import { File } from '@ionic-native/file';
+import { Camera } from '@ionic-native/camera';
+import { DirectoryEntry, File } from '@ionic-native/file';
 import { Injectable } from '@angular/core';
 import { UserSettings } from './user-settings.service';
-import Bluebird from 'bluebird';
 
 @Injectable()
 
 export class CameraSettings {
 
     myStoragePath: string;
+    CAMERA: string = 'camera';
+    GALLERY: string = 'gallery';
     path;
 
     constructor(private camera: Camera, 
@@ -25,19 +26,14 @@ export class CameraSettings {
             const UPLOADS_FOLDER = 'uploads';
 
             this.file.checkDir(this.path, 'uploads')
-
             .then( () => {
                 this.myStoragePath = this.path + UPLOADS_FOLDER;
-                // alert('CAMERA_SETTING_ERR ' + this.myStoragePath);
-                // List files inside uploads folder
                 this.file.listDir(this.path, UPLOADS_FOLDER)
                     .then( (res) => { 
-                        // alert('EXIST_UPLOADS_FILES ' 
-                        // + JSON.stringify(res) ); 
+                        //
                     })
                     .catch( (err) => { alert('EXIST_UPLOADS_ERR ' + JSON.stringify(err) ); } );
             })
-
             .catch( () => {
                 // Initial Creation
                 this.file.createDir(this.path, 'uploads', false)
@@ -59,189 +55,86 @@ export class CameraSettings {
             .catch( (err) => {  alert('IS_UPLOADS_EXISTS_ERR ' + JSON.stringify(err)) });
     }
     
-    useGallery(){
-        return new Promise((resolve, reject) => {
-            //////////////
-            let opts = {
-                sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-                encodingType: this.camera.EncodingType.JPEG,   
-                destinationType: this.camera.DestinationType.FILE_URI, // instead of DATA_URL    
-                quality: 100,
-                targetWidth: 200,
-                targetHeight: 200,
-                correctOrientation: true,
-                allowEdit: true,
-                saveToPhotoAlbum: false
-            };
-
-            this.camera.getPicture(opts)
-                .then( 
-                (uri) => {
-                    const _extension = '.' + this.getFileExtension(uri);
-                    const path = uri.substring(0, uri.lastIndexOf('/') + 1);
-                    const name = this.getFileName(uri) + _extension;
-                    const newPath = this.myStoragePath;
-                    const newName = 'gallery_' + this.hashName() + _extension;
-
-                    this.file.copyFile(path, name, newPath, newName)
-                    .then( (res) => {
-                        resolve(res.nativeURL);
-                    })
-                    .catch( (err) => {
-                        alert('COPY_FILE_GALLERY_ERR ' + JSON.stringify(err));
-                        reject(err);
-                    });
-                }, 
-                (err) => {
-                    // alert('GALLERY_REJECTED ' + JSON.stringify(err));
-                    // Sendings action gallery were cancelled
-                    reject(err);
-                })
-            //////////////
-        });
-    }
-
-    useCamera(){
-        // # 1
-        // const getURI = ()  => {
-            const opts: CameraOptions = {
-                quality: 100,
-                mediaType: this.camera.MediaType.PICTURE,
-                encodingType: this.camera.EncodingType.JPEG,
-                destinationType: this.camera.DestinationType.FILE_URI,
-                targetWidth: 200,
-                targetHeight: 200,
-                correctOrientation: true,
-                allowEdit: true,
-                saveToPhotoAlbum: false
-            };
-
-            // let promise = new Bluebird( (resolve, reject) => {
-             return this.camera.getPicture(opts)
-                    // .then( (uri) => {
-                        // resolve(uri);
-                    // })
-                    // .catch( (err) => { 
-                        // alert('GET_URI_CAMERA_ERR ' + JSON.stringify(err));
-                        // reject(err);
-                    // });
-            // });
-
-            // return promise;
-        // }
-
-        // return getURI();
-    }
+    useMedia(mediaType: string){
+        let opts;
         
-    // # 2
-    // const moveFile = (uri) => {
-    //     console.log('^^^^ ' +  uri);
-    //     const _extension = '.' + this.getFileExtension(uri);
-    //     const _name = this.getFileName(uri) + _extension;
-    //     const _newPath = this.myStoragePath;
-    //     const _newName = 'camera_' + this.hashName() + _extension;
-    //     const _uri = uri.substring(0, uri.lastIndexOf('/') + 1);
-    //     let promise = new Bluebird( (resolve, reject) => {
-    //         this.file.moveFile(_uri, _name, _newPath, _newName)
-    //         .then( _ => {
-    //             alert('ENTRY: ' + JSON.stringify(_));
-    //             resolve( _.nativeURL );
-    //         })
-    //         .catch((err) => {
-    //             alert('COPY_FILE_CAMERA_ERR ' + JSON.stringify(err));
-    //             reject(err);
-    //         });
-    //     });
-    //     return promise;
-    // }
-    // # 3
-    // return getURI().then(moveFile)
+        switch(mediaType){
+            case this.CAMERA:
+                opts = {
+                    quality: 100,
+                    mediaType: this.camera.MediaType.PICTURE,
+                    encodingType: this.camera.EncodingType.JPEG,
+                    destinationType: this.camera.DestinationType.FILE_URI,
+                    targetWidth: 200,
+                    targetHeight: 200,
+                    correctOrientation: true,
+                    allowEdit: true,
+                    saveToPhotoAlbum: false
+                };
+            break;
 
-    moveFileToStorage(uri) {
-        const _extension = '.' + this.getFileExtension(uri);
-        const _name = this.getFileName(uri) + _extension;
-        const _newPath = this.myStoragePath;
-        const _newName = 'camera_' + this.hashName() + _extension;
-        const _uri = uri.substring(0, uri.lastIndexOf('/') + 1);
+            case this.GALLERY:
+                opts = {
+                    sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+                    encodingType: this.camera.EncodingType.JPEG,   
+                    destinationType: this.camera.DestinationType.FILE_URI, // instead of DATA_URL    
+                    quality: 100,
+                    targetWidth: 200,
+                    targetHeight: 200,
+                    correctOrientation: true,
+                    allowEdit: true,
+                    saveToPhotoAlbum: false
+                };
+            break;
+        }
 
-        return this.file.copyFile(_uri, _name, _newPath, _newName);
-    }
-
-    //  const moveFile = (uri) => {
-    //     let promise = new Bluebird( (resolve, reject) => {
-    //         this.file.moveFile(_uri, _name, _newPath, _newName)
-    //         .then( _ => {
-    //             alert('STORED: ' + JSON.stringify(_));
-    //             resolve(_.nativeURL);
-    //         })
-    //         .catch((err) => {
-    //             alert('COPY_FILE_CAMERA_ERR ' + JSON.stringify(err));
-    //             reject(err);
-    //         });
-    //     });
-    //     return promise;
-    // }
-    // return moveFile(uri);
-
-    useCamera1(){
-        return new Promise( (resolve, reject) => {
-            //////////
-            const opts: CameraOptions = {
-                quality: 100,
-                // destinationType: this.camera.DestinationType.DATA_URL,
-                mediaType: this.camera.MediaType.PICTURE,
-                encodingType: this.camera.EncodingType.JPEG,
-                destinationType: this.camera.DestinationType.FILE_URI,
-                // allowEdit: true,
-                targetWidth: 200,
-                targetHeight: 200,
-                correctOrientation: true,
-                saveToPhotoAlbum: false
-            };
-
-            this.camera.getPicture(opts).then((uri) => {
-
-                const _uri = uri.substring(0, uri.lastIndexOf('/') + 1);
-                alert('WITH_FILE ' + uri + ' W/o_FILE ' + _uri);
-
-                ///////////////////////
-                // this.file.resolveDirectoryUrl(_uri)
-                // .then( (res) => { alert('resolveDirectoryUrl_SUC ' + JSON.stringify(res)) })
-                // .catch( (err) => { alert('resolveDirectoryUrl_ERR ' + JSON.stringify(err) ) });
-                // this.file.resolveLocalFilesystemUrl(_uri)
-                // .then( (res) => { alert('resolveLocalFilesystemUrl_SUC ' + JSON.stringify(res)) })
-                // .catch( (err) => { alert('resolveLocalFilesystemUrl_ERR ' + JSON.stringify(err) ) });
-                ///////////////////////
-
-                const _extension = '.' + this.getFileExtension(uri);
-                const _name = this.getFileName(uri) + _extension;
-                const _newPath = this.myStoragePath;
-                const _newName = 'camera_' + this.hashName() + _extension;
-                
-                ///////////////////////
-                // this.file.checkDir(this.path, 'uploads')
-                //     .then( (res) => {
-                //         alert('CAMERA_CHECKDIR_SUCC ' + JSON.stringify(res)); 
-                //     })
-                //     .catch( (err) => { alert('CAMERA_CHECKDIR_ERR ' + JSON.stringify(err)); });
-                ///////////////////////
-
-                    this.file.moveFile(_uri, _name, _newPath, _newName)
-                        .then( (res) => {
-                            resolve(res.nativeURL);
+        const getFileEntry = () => {
+            // promise
+            let promise = new Promise( (resolve, reject) => {
+                this.camera.getPicture(opts)
+                .then( (cacheURI) => {
+                    this.file.resolveLocalFilesystemUrl(cacheURI)
+                        .then( (directoryEntry: DirectoryEntry) => {
+                            resolve(directoryEntry);
                         })
                         .catch( (err) => {
-                            alert('COPY_FILE_CAMERA_ERR ' + JSON.stringify(err));
+                            alert('CameraSetting.ts getFileEntry Error ' + JSON.stringify(err));
                             reject(err);
                         });
-
-                }, (err) => {
-                    // alert('USE_CAMERA_PROMISE_ERR ' + JSON.stringify(err));
-                    // Sending action that camera were cancelled.
+                })
+                .catch( (err) => {
                     reject(err);
                 });
-            //////////
-        });
+            });
+            return promise;
+        }
+
+        const moveToFile = (fileEntry: DirectoryEntry) => {
+            const _extension = '.' + this.getFileExtension(fileEntry.nativeURL);
+            const newName = ((mediaType===this.CAMERA) ? 'camera_' : 'gallery_').toString() + this.hashName() + _extension;
+            // promise
+            let promise = new Promise( (resolve, reject) => {
+                this.file.resolveLocalFilesystemUrl( this.file.dataDirectory.toString().concat('uploads') )
+                    .then( (res: DirectoryEntry) => {
+                        fileEntry.moveTo(
+                            res,
+                            newName,
+                            (success) => { 
+                                resolve(success);
+                            },
+                            (err) => {
+                                alert('CameraSetting.ts fileEntry.moveTo Error' + JSON.stringify(err));
+                                reject(err);
+                            })
+                    })
+                    .catch( (err) => {
+                        alert('CameraSetting.ts moveToFile Error ' + JSON.stringify(err));
+                    });
+            });
+            return promise;
+        }
+
+        return getFileEntry().then(moveToFile);
     }
 
     toBase64(uri){
@@ -249,7 +142,7 @@ export class CameraSettings {
         const filename = this.getFileName(uri) + '.' + this.getFileExtension(uri);
         return this.file.readAsDataURL(path, filename);
     }
-    
+
     hashName(): string {
         let chars = '';
         let limit = 8;
@@ -275,11 +168,3 @@ export class CameraSettings {
         return '';
     }
 }
-
-// imageData is either a base64 encoded string or a file URI
-// If it's base64:
-// let base64Image = 'data:image/jpeg;base64,' + imageData;
-// alert('[URI]: ' + uri +
-//      ' [FileName]: ' + this.getFileName(uri) +
-//      ' [MyPath]: ' + this.myStoragePath);
-// alert('[Extension] ' + this.getFileExtension(uri));

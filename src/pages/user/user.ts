@@ -1,3 +1,4 @@
+import { DirectoryEntry } from '@ionic-native/file';
 import { UserSettings, CameraSettings } from '../../shared/shared';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Component } from '@angular/core';
@@ -8,6 +9,7 @@ import {
     NavController,
     NavParams,
     Platform,
+    ToastController,
     ViewController
 } from 'ionic-angular';
 
@@ -33,18 +35,12 @@ export class UserPage {
   hasPictureURL: Boolean = true;
   hasPassword: Boolean = true; 
   hasDescription: Boolean = true;
-
   isEditing: Boolean = false;
-
   DEFAULT_URL = 'assets/uploads/user.jpg';
-
   imgSrc = this.DEFAULT_URL;
-  
   rawPath: string = this.DEFAULT_URL;
-
   rowid;
   user;
-
 
   constructor(public navCtrl: NavController, 
               private viewCtrl: ViewController,
@@ -54,7 +50,8 @@ export class UserPage {
               private events: Events,
               private actionSheetCtrl: ActionSheetController,
               public platform: Platform,
-              private cameraSettings: CameraSettings) {
+              private cameraSettings: CameraSettings,
+              private toastCtrl: ToastController) {
 
                 this.formGroup = this.formBuilder.group({
                   fullname : [null, [Validators.required]],
@@ -93,8 +90,6 @@ export class UserPage {
             
             this.navCtrl.pop();
 
-            // alert('FOO_UPDATE_USER');
-
             this.events.publish('user:added');
 
             this.events.publish('userdetails:updated', res );
@@ -105,9 +100,7 @@ export class UserPage {
           });
 
       } else {
-        // alert('to save');
         formData['pictureURL'] = this.rawPath;
-        // alert('WHEN SUBMIT ' + JSON.stringify(formData));
         
         this.userSettings.addUser(formData)
           .then( (res) => {
@@ -180,14 +173,14 @@ export class UserPage {
           text: 'Camera',
           icon: ! this.platform.is('ios') ? 'camera' : null,
           handler: () => {
-            this.openCamera();
+            this.useMedia(this.cameraSettings.CAMERA)
           }
         },
         {
           text: 'Gallery',
           icon: ! this.platform.is('ios') ? 'images' : null,
           handler: () => {
-            this.openGallery();
+            this.useMedia(this.cameraSettings.GALLERY)
           }
         },
         {
@@ -200,67 +193,30 @@ export class UserPage {
         }
       ]
     });
-
     actionSheet.present();
   }
 
-  openCamera(){
-    this.cameraSettings.useCamera()
-    .then( (cacheFile) => {
-      // this.rawPath = res.toString();
-      alert('USER.TS_OPEN_CAMERA_SUCC1 ' + JSON.stringify(cacheFile));
-      // Store
-      this.storeFile(cacheFile);
-      // preview
-      this.previewFile(cacheFile);
-    })
-    .catch( (err) => {
-      alert('USER.TS_OPEN_CAMERA_ERR ' + JSON.stringify(err))
-    });
-  }
+  useMedia(mediaType){
+    this.cameraSettings.useMedia(mediaType)
+      .then( (res: DirectoryEntry) => {
+        this.rawPath = res.nativeURL;
 
-  storeFile(cacheFile){
-    alert('USER.TS ON_STORE ' + cacheFile);
-    
-    this.cameraSettings.moveFileToStorage(cacheFile)
-      .then( _ => {
-        this.rawPath = _.nativeURL.toString();
-        
-        // this.previewFile(_.nativeURL.toString());
-
-        alert('USER.TS MoveTo_STORED: ' + JSON.stringify(_));
+        this.cameraSettings.toBase64(res.nativeURL)
+          .then( (base64) => {
+            this.imgSrc = base64;
+          })
+          .catch( (err) => {
+            alert('User.ts ConverToBase64 Error ' + JSON.stringify(err));
+          });
       })
-      .catch((err) => { 
-          alert('USER.TS MoveTo_ERR ' + JSON.stringify(err));
-      });
-  }
-
-  previewFile(cacheFile){
-    alert('GENERATE_PREVIEW ' + cacheFile);
-    
-    this.cameraSettings
-        .toBase64(cacheFile)
-        .then( (base64) => { this.imgSrc = base64; })
-        .catch( (err) => {  alert('USER.TS_TO_BASE64_ERR ' + JSON.stringify(err) ) });
-  }
-
-
-  openGallery(){
-    this.cameraSettings.useGallery()
-    .then( (uri) => {
-
-      this.rawPath = uri.toString();
-
-      this.cameraSettings.toBase64(uri)
-        .then( (base64) => { 
-          this.imgSrc = base64;
-        })
-        .catch( (err) => { 
-          alert('USER_TO_BASE64_ERR ' + JSON.stringify(err) ) 
+      .catch( (err) => {
+        // alert('User.ts UseCamera Err ' + JSON.stringify(err));
+        let whenCancelled = this.toastCtrl.create({
+            message: err.toString(),
+            duration: 2000,
+            position: 'bottom'
         });
-    })
-    .catch( (err) => { 
-      alert('USER_OPEN_GALLERY_ERR ' + JSON.stringify(err) )
-    });
+        whenCancelled.present();
+      });
   }
 }
