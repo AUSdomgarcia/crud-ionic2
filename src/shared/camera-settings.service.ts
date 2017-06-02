@@ -64,8 +64,8 @@ export class CameraSettings {
                     mediaType: this.camera.MediaType.PICTURE,
                     encodingType: this.camera.EncodingType.JPEG,
                     destinationType: this.camera.DestinationType.FILE_URI,
-                    targetWidth: 200,
-                    targetHeight: 200,
+                    targetWidth: 1000,
+                    targetHeight: 1000,
                     correctOrientation: true,
                     allowEdit: true,
                     saveToPhotoAlbum: false
@@ -78,8 +78,8 @@ export class CameraSettings {
                     encodingType: this.camera.EncodingType.JPEG,   
                     destinationType: this.camera.DestinationType.FILE_URI, // instead of DATA_URL    
                     quality: 100,
-                    targetWidth: 200,
-                    targetHeight: 200,
+                    targetWidth: 1000,
+                    targetHeight: 1000,
                     correctOrientation: true,
                     allowEdit: true,
                     saveToPhotoAlbum: false
