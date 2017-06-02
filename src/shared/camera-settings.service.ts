@@ -38,13 +38,12 @@ export class CameraSettings {
                 // Initial Creation
                 this.file.createDir(this.path, 'uploads', false)
                 .then( (res) => { 
-                    alert('CREATED_UPLOAD_DIR ' + JSON.stringify(res));
-
-                    this.checkIfUploadExists();
+                    // alert('CREATED_UPLOAD_DIR ' + JSON.stringify(res));
+                    // this.checkIfUploadExists();
                 })
                 .catch( (err) => { 
                     alert('CREATE_UPLOAD_DIR_ERR ' + JSON.stringify(err));
-                })
+                });
             });
         }
     }
