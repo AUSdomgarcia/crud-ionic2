@@ -18,6 +18,7 @@ import { UserPage } from '../pages/user/user';
 import { UserDetailsPage } from '../pages/user-details/user-details';
 import { UserPopOverPage } from '../pages/user-pop-over/user-pop-over';
 import { StartupPage } from '../pages/startup/startup';
+import { CakeCreatorPage } from '../pages/cake-creator/cake-creator';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { StartupPage } from '../pages/startup/startup';
     UserPage,
     UserDetailsPage,
     UserPopOverPage,
-    StartupPage
+    StartupPage,
+    CakeCreatorPage
   ],
   imports: [
     BrowserModule,
@@ -42,7 +44,8 @@ import { StartupPage } from '../pages/startup/startup';
     UserPage,
     UserDetailsPage,
     UserPopOverPage,
-    StartupPage
+    StartupPage,
+    CakeCreatorPage
   ],
   providers: [
     StatusBar,
