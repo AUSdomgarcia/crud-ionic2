@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import * as PIXI from 'pixi';
+import * as PIXI from 'pixi.js';
 
 /**
  * Generated class for the CakeCreatorPage page.
@@ -16,35 +16,47 @@ import * as PIXI from 'pixi';
 
 export class CakeCreatorPage {
 
-  bunny;
-  renderer;
-  stage;
+  sprite;
+  app;
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams) {}
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad CakeCreatorPage');
-    this.renderer = PIXI.WebGLRenderer(800, 600);
-    document.getElementById('canvas-container').appendChild(this.renderer.view);
-    
-    // this.stage = new PIXI.Stage();
-    // let bunnyTexture = PIXI.Texture.fromImage("assets/uploads/user.jpg");
-    // this.bunny = new PIXI.Sprite(bunnyTexture);
-    
-    // this.bunny.position.x = 400;
-    // this.bunny.position.y = 300;
-    // this.bunny.scale.x = 2;
-    // this.bunny.scale.y = 2;
- 
-    // this.stage.addChild(this.bunny);
-    // requestAnimationFrame(this.animate);
+
+    console.log(this.sprite, this.app);
+
+    if( ! this.app){
+    this.app = new PIXI.Application(320, 320, { backgroundColor: 0x1099bb });
+
+    const cc = document.getElementById('canvas-container');
+          cc.appendChild(this.app.view);
+
+    // PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+    this.sprite = PIXI.Sprite.fromImage('assets/uploads/bunny.png');
+
+    this.sprite.anchor.set(0.5);
+    this.sprite.x = this.app.renderer.width / 2;
+    this.sprite.y = this.app.renderer.height / 2;
+
+    this.sprite.interactive = true;
+    this.sprite.buttonMode = true;
+
+    this.sprite.on('pointerdown', this.toggleScaleBunny.bind(this));
+    this.app.stage.addChild(this.sprite);
+    }
   }
 
-  animate(){
-    // this.bunny.rotation += 0.01;
-    // this.renderer.render(this.stage);
-    // requestAnimationFrame(this.animate);
+  ionViewDidLeave(){
+    if(typeof this.app.stop === 'function'){
+      this.app.stop();
+      this.app.destroy(true);   
+    }
+  }
+
+  toggleScaleBunny(){
+    this.sprite.scale.x *= 1.25;
+    this.sprite.scale.y *= 1.25;
   }
 }
