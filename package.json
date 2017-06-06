@@ -32,6 +32,7 @@
         "cordova-plugin-camera": "^2.4.1",
         "cordova-plugin-compat": "^1.1.0",
         "cordova-plugin-console": "^1.0.5",
+        "cordova-plugin-crosswalk-webview": "^2.3.0",
         "cordova-plugin-device": "^1.1.4",
         "cordova-plugin-file": "^4.3.3",
         "cordova-plugin-splashscreen": "^4.0.3",
@@ -65,7 +66,14 @@
             "ionic-plugin-keyboard": {},
             "cordova-sqlite-storage": {},
             "cordova-plugin-camera": {},
-            "cordova-plugin-file": {}
+            "cordova-plugin-file": {},
+            "cordova-plugin-crosswalk-webview": {
+                "XWALK_VERSION": "23+",
+                "XWALK_LITEVERSION": "xwalk_core_library_canary:17+",
+                "XWALK_COMMANDLINE": "--disable-pull-to-refresh-effect",
+                "XWALK_MODE": "embedded",
+                "XWALK_MULTIPLEAPK": "true"
+            }
         },
         "platforms": [
             "android"

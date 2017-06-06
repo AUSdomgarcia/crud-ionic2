@@ -11,7 +11,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { HomePage } from '../pages/home/home';
 import { MyApp } from './app.component';
-import { UserSettings, CameraSettings } from '../shared/shared';
+import { UserSettings, CameraSettings, DeviceSettings } from '../shared/shared';
 
 import { LoginPage } from '../pages/login/login';
 import { UserPage } from '../pages/user/user';
@@ -54,6 +54,7 @@ import { CakeCreatorPage } from '../pages/cake-creator/cake-creator';
     SQLite,
     Camera,
     CameraSettings,
+    DeviceSettings,
     File,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

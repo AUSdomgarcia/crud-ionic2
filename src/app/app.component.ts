@@ -2,9 +2,9 @@ import { CakeCreatorPage } from '../pages/cake-creator/cake-creator';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Component, ViewChild } from '@angular/core';
-import { Platform, Nav } from 'ionic-angular';
+import { Nav, Platform } from 'ionic-angular';
 
-import { UserSettings, CameraSettings } from '../shared/shared';
+import { UserSettings, CameraSettings, DeviceSettings } from '../shared/shared';
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
 import { StartupPage } from '../pages/startup/startup';
@@ -24,7 +24,8 @@ export class MyApp {
               statusBar: StatusBar, 
               splashScreen: SplashScreen,
               userSettings: UserSettings,
-              cameraSettings: CameraSettings) {
+              cameraSettings: CameraSettings,
+              deviceSettings: DeviceSettings) {
 
     platform.ready().then((device) => {
       // Okay, so the platform is ready and our plugins are available.
@@ -35,20 +36,22 @@ export class MyApp {
       splashScreen.hide();
 
       let isNative = false;
+
+      alert('WHAT_HAPPEN?' + this.platform.is('cordova'));
        
       if(this.platform.is('cordova')){
         isNative = true;
-        
         this.rootPage = HomePage;
-
         userSettings.initSQLite(isNative);
         cameraSettings.initFileDirectory(this.platform);
+        deviceSettings.add(platform);
       }
-      
     });
   }
 
   toggleCanvas(){
-    this.nav.push(CakeCreatorPage);
+    if(this.nav.getActive().name !== 'CakeCreatorPage'){
+      this.nav.push(CakeCreatorPage);
+    }
   }
 }
