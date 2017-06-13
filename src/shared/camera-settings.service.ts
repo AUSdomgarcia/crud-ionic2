@@ -1,3 +1,4 @@
+import { Helpers } from './helpers.service';
 import { Camera } from '@ionic-native/camera';
 import { DirectoryEntry, File } from '@ionic-native/file';
 import { Injectable } from '@angular/core';
@@ -11,9 +12,10 @@ export class CameraSettings {
     CAMERA: string = 'camera';
     GALLERY: string = 'gallery';
     path;
-
+    
     constructor(private camera: Camera, 
                 private file: File,
+                private helpers: Helpers,
                 private userSettings: UserSettings){}
 
     initFileDirectory(platform){
@@ -109,8 +111,8 @@ export class CameraSettings {
         }
 
         const moveToFile = (fileEntry: DirectoryEntry) => {
-            const _extension = '.' + this.getFileExtension(fileEntry.nativeURL);
-            const newName = ((mediaType===this.CAMERA) ? 'camera_' : 'gallery_').toString() + this.hashName() + _extension;
+            const _extension = '.' + this.helpers.toFileExtension(fileEntry.nativeURL);
+            const newName = ((mediaType===this.CAMERA) ? 'camera_' : 'gallery_').toString() + this.helpers.toHashName() + _extension;
             // promise
             let promise = new Promise( (resolve, reject) => {
                 this.file.resolveLocalFilesystemUrl( this.file.dataDirectory.toString().concat('uploads') )
@@ -134,36 +136,5 @@ export class CameraSettings {
         }
 
         return getFileEntry().then(moveToFile);
-    }
-
-    toBase64(uri){
-        const path = uri.substring(0, uri.lastIndexOf('/') + 1);
-        const filename = this.getFileName(uri) + '.' + this.getFileExtension(uri);
-        return this.file.readAsDataURL(path, filename);
-    }
-
-    hashName(): string {
-        let chars = '';
-        let limit = 8;
-        let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-        for (var i=0; i < limit; i++) {
-            chars += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return chars;
-    }
-
-    getFileExtension = function(url) {
-        return url.split('.').pop().split(/\#|\?/)[0];
-    }
-
-    getFileName(url) {
-        if (url) {
-            var m = url.toString().match(/.*\/(.+?)\./);
-            if (m && m.length > 1) {
-                return m[1];
-            }
-        }
-        return '';
     }
 }
