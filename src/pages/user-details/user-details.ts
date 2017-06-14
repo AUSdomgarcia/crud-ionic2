@@ -1,9 +1,7 @@
-import { CameraSettings } from '../../shared/camera-settings.service';
-import { UserPage } from '../user/user';
+import { Helpers } from '../../shared/helpers.service';
 import { Component } from '@angular/core';
 import { Events, IonicPage, NavController, NavParams, PopoverController, ToastController } from 'ionic-angular';
 import { UserPopOverPage } from '../user-pop-over/user-pop-over';
-
 /**
  * Generated class for the UserDetailsPage page.
  *
@@ -32,7 +30,7 @@ export class UserDetailsPage {
               private popoverController: PopoverController,
               private events: Events,
               private toastCtrl: ToastController,
-              private cameraSettings: CameraSettings) 
+              private helpers: Helpers) 
 
               { }
               
@@ -42,7 +40,6 @@ export class UserDetailsPage {
     // subscribe 
     this.popOverSubscribe = () => {
       this.leaveAfterDelete();
-
     }
     this.events.subscribe('user:popover', this.popOverSubscribe);
 
@@ -69,7 +66,8 @@ export class UserDetailsPage {
   
   updateImageSrc(){
     if( ! this.user.pictureURL.includes('assets')){
-       this.cameraSettings.toBase64(this.user.pictureURL)
+      //  this.helpers.toBase64(this.user.pictureURL)
+       this.helpers.toBase64('file:///data/data/io.ionic.prototypev5/files/uploads/cake_entriesAHRWhBQh.jpg')
       .then( (res) => {
         this.imgSrc = res;
       })

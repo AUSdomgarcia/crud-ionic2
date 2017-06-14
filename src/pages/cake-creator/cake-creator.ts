@@ -1,7 +1,9 @@
-import { DeviceSettings } from '../../shared/shared';
+import { ViewChild } from '@angular/core';
+import { DeviceSettings, CakeCreatorSettings } from '../../shared/shared';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Slides, ToastController } from 'ionic-angular';
 import * as PIXI from 'pixi.js';
+
 
 /**
  * Generated class for the CakeCreatorPage page.
@@ -17,12 +19,16 @@ import * as PIXI from 'pixi.js';
 
 export class CakeCreatorPage {
 
-  sprite;
+  @ViewChild(Slides) slides: Slides;
+
+  baseImg;
   app;
 
   bgContainer;
-  cakeVarianceContainer;
+  cakeContainer;
   messageContainer;
+  candleContainer;
+
   currentTab = 1;
 
   items = [];
@@ -31,22 +37,22 @@ export class CakeCreatorPage {
     {
       name: 'Caramel',
       img: 'assets/cakemaker/variance1.png',
-      type: 'variant'
+      type: 'cake'
     },
     {
       name: 'Chocolate',
       img: 'assets/cakemaker/variance2.png',
-      type: 'variant'
+      type: 'cake'
     },
     {
       name: 'Milk',
       img: 'assets/cakemaker/variance3.png',
-      type: 'variant'
+      type: 'cake'
     },
     {
       name: 'Coffee',
       img: 'assets/cakemaker/variance4.png',
-      type: 'variant'
+      type: 'cake'
     }
   ];
 
@@ -66,19 +72,38 @@ export class CakeCreatorPage {
       img: 'assets/cakemaker/messages/hbd.png',
       type: 'message'
     }
-  ]
+  ];
 
-
+  candles = [
+    {
+      name: '2 Candles',
+      img: 'assets/cakemaker/candles/001.png',
+      type: 'candle'
+    },
+    {
+      name: '3 Candles',
+      img: 'assets/cakemaker/candles/002.png',
+      type: 'candle'
+    },
+    {
+      name: '6 Candles',
+      img: 'assets/cakemaker/candles/003.png',
+      type: 'candle'
+    },
+  ];
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams,
-    private deviceSettings: DeviceSettings) {
+    private deviceSettings: DeviceSettings,
+    private cakeCreatorSettings: CakeCreatorSettings,
+    private toastCtrl: ToastController) {
       this.items = this.cakes;
     }
 
   ionViewDidLoad() {
-    console.log(this.sprite, this.app);
+    console.log('Loaded cakeCreator');
+
     const platform = this.deviceSettings.getPlatform();
 
     if( ! this.app){
@@ -89,35 +114,41 @@ export class CakeCreatorPage {
                             backgroundColor: 0xffffff 
                           });
 
-    const cc = document.getElementById('canvas-container');
-          cc.appendChild(this.app.view);
+    let markup = document.getElementById('canvas-container');
+        markup.appendChild(this.app.view);
 
     // Define Containers
     this.bgContainer = new PIXI.Container();
-    this.cakeVarianceContainer = new PIXI.Container();
+    this.cakeContainer = new PIXI.Container();
     this.messageContainer = new PIXI.Container();
+    this.candleContainer = new PIXI.Container();
 
     // PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-    this.sprite = PIXI.Sprite.fromImage('assets/cakemaker/base.jpg');
-    let ratio =  (platform.width() / this.sprite.width);
+    this.baseImg = PIXI.Sprite.fromImage('assets/cakemaker/base.jpg');
+    let ratio =  (platform.width() / this.baseImg.width);
 
-    this.sprite.width = this.sprite.width * ratio;
-    this.sprite.height = 250;
-    this.sprite.anchor.set(0.5);
+    this.baseImg.width = this.baseImg.width * ratio;
+    this.baseImg.height = 250;
+    this.baseImg.anchor.set(0.5);
 
+    // Items
     this.bgContainer.x = this.app.renderer.width / 2;
     this.bgContainer.y = this.app.renderer.height / 2;
-    this.bgContainer.addChild(this.sprite);
 
-    this.cakeVarianceContainer.x = this.app.renderer.width / 2;
-    this.cakeVarianceContainer.y = (this.app.renderer.height / 2) - 40;
+    this.cakeContainer.x = this.app.renderer.width / 2;
+    this.cakeContainer.y = (this.app.renderer.height / 2) - 40;
 
     this.messageContainer.x = this.app.renderer.width / 2;
-    this.messageContainer.y = (this.app.renderer.height / 2) - 100;
+    this.messageContainer.y = (this.app.renderer.height / 2) - 20;
+
+    this.candleContainer.x = this.app.renderer.width / 2;
+    this.candleContainer.y = (this.app.renderer.height / 2) - 140;
 
     // Layers
+    this.bgContainer.addChild(this.baseImg);
     this.app.stage.addChild(this.bgContainer);
-    this.app.stage.addChild(this.cakeVarianceContainer);
+    this.app.stage.addChild(this.cakeContainer);
+    this.app.stage.addChild(this.candleContainer);
     this.app.stage.addChild(this.messageContainer);
 
     // this.sprite.interactive = true;
@@ -126,85 +157,100 @@ export class CakeCreatorPage {
     }
   }
 
-  // toggleScaleBunny(){
-  //   this.sprite.scale.x *= 1.25;
-  //   this.sprite.scale.y *= 1.25;
-  // }
-
   ionViewDidLeave(){
-    if(typeof this.app.stop === 'function'){
-      this.app.stop();
-      this.app.destroy(true);
+    /* 
+    console.log('is_leaving');
+    if(this.navCtrl.getActive().name === 'CakeCreatorPage' && this.app !== null) {
+      if(typeof this.app.stop === 'function' ){
+        this.app.stop();
+        this.app.destroy(true);
+        this.app = null;
+      }
     }
+    */
   }
 
+  garbageCollect(){
+    /*
+    console.log('calling gb ', this.app);
+    if(this.app){
+      if(typeof this.app.stop === 'function' ){
+        this.app.stop();
+        this.app.destroy(true);
+        this.app = null;
+
+        console.log(this.app);
+      }
+    }
+    */
+  }
+  
   toggleSelectItem(item){
-    console.log(item);
-    
-    
+
     switch(item.type){
-      case 'variant':
-      let cakeSprite = PIXI.Sprite.fromImage(item.img);
-        cakeSprite.anchor.set(0.5);
-        // TODO: Scale it proportionally
-        cakeSprite.height = 200;
-        cakeSprite.width = 200;
-        this.cakeVarianceManager(cakeSprite);
+      case 'cake':
+      let cake = PIXI.Sprite.fromImage(item.img);
+        cake.anchor.set(0.5);
+        cake.height = 200;
+        cake.width = 200;
+        this.childrenManager(cake, this.cakeContainer);
       break;
 
-      case 2:
-        //
+      case 'candle':
+        let candle = PIXI.Sprite.fromImage(item.img);
+            candle.anchor.set(0.5);
+            candle.height = 100;
+            candle.width = 100;
+            this.childrenManager(candle, this.candleContainer);
       break;
 
       case 'message':
         let message = PIXI.Sprite.fromImage(item.img);
           message.anchor.set(0.5);
-          // TODO: Scale it proportionally
           message.height = 90;
           message.width = 90;
-          this.messageManager(message);
+          this.childrenManager(message, this.messageContainer);
       break;
     }
   }
 
   toggleToURL(){
-    console.log(JSON.stringify(this.app.renderer.view.toDataURL()));
+    this.cakeCreatorSettings
+        .saveEntry(this.app.renderer.view.toDataURL())
+        .then( () => {
+          let t = this.toastCtrl.create({
+            message: 'Created cake entry successfully',
+            duration: 3000
+          });
+          t.present();
+        })
+        .catch( (err) => {
+          alert('cake-creator.ts SaveEntry Err ' + JSON.stringify(err))
+        });
   }
 
-  cakeVarianceManager(cakeSprite){
-    if(this.cakeVarianceContainer.children.length !== 0){
-      this.cakeVarianceContainer.removeChildAt(0);
-      this.cakeVarianceContainer.addChildAt(cakeSprite,0);
+  childrenManager(children, container){
+    if(container.children.length !== 0){
+      container.removeChildAt(0);
+      container.addChildAt(children,0);
     } else {
-      this.cakeVarianceContainer.addChildAt(cakeSprite, 0);
-    }
-  }
-
-  messageManager(message){
-    if(this.messageContainer.children.length !== 0){
-      this.messageContainer.removeChildAt(0);
-      this.messageContainer.addChildAt(message,0);
-    } else {
-      this.messageContainer.addChildAt(message, 0);
+      container.addChildAt(children,0);
     }
   }
 
   toggleActive(tabId){
+    // Reset slides to zero index
+    let slideActiveIndex = this.slides.getActiveIndex();
+    if(slideActiveIndex !== 0){
+      this.slides.slideTo(0, 0);
+    }
+
     this.currentTab = tabId;
     
     switch(tabId){
-      case 1:
-        this.items = this.cakes;
-      break;
-
-      case 2:
-        //
-      break;
-
-      case 3:
-        this.items = this.messages;
-      break;
+      case 1: this.items = this.cakes; break;
+      case 2: this.items = this.candles; break;
+      case 3: this.items = this.messages; break;
     }
   }
-  
 }
