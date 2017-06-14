@@ -16,7 +16,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class CakesHomePage {
 
-  cakes;
+  cakes = [];
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,

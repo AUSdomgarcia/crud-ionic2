@@ -1,6 +1,4 @@
 import { CakeNavigationPage } from '../pages/cake-navigation/cake-navigation';
-import { CakeCreatorPage } from '../pages/cake-creator/cake-creator';
-import { CakesHomePage } from '../pages/cakes-home/cakes-home';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Component, ViewChild } from '@angular/core';

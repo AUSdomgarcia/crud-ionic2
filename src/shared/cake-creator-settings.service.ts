@@ -2,6 +2,7 @@ import { File, DirectoryEntry } from '@ionic-native/file';
 import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { Helpers } from './shared';
+import * as moment from 'moment';
 
 @Injectable()
 
@@ -54,7 +55,11 @@ export class CakeCreatorSettings {
                 db.executeSql(`SELECT * FROM cake_entries`, [])
                 .then( (res) => { 
                     if(res.rows.item(0)){
-                        db.executeSql(`SELECT rowid, name, pictureURL
+                        db.executeSql(`SELECT rowid, 
+                                            name, 
+                                            pictureURL, 
+                                            created_at, 
+                                            updated_at
                                         FROM cake_entries`, [])
                         .then( (result) => {
                             for(let i = 0; i < result.rows.length; i++){
@@ -62,7 +67,8 @@ export class CakeCreatorSettings {
                                     .push({
                                         rowid: result.rows.item(i).rowid,
                                         name: result.rows.item(i).name,
-                                        pictureURL: result.rows.item(i).pictureURL
+                                        pictureURL: result.rows.item(i).pictureURL,
+                                        created_at: result.rows.item(i).created_at
                                     });
                             }
                             resolve(collections);
@@ -89,8 +95,8 @@ export class CakeCreatorSettings {
     // File access    
     saveEntry(dataURI){
         let myblob = this.helpers.dataURItoBlob(dataURI);
-        let newName = 'cake_entries_' + this.helpers.toHashName() + '.jpg';
-
+        let newName = 'cake_entry_' + this.helpers.toHashName() + '.jpg';
+        
         const saveToLocalFile = () => {
             let promise = new Promise( (resolve, reject) => {
                 this.file.resolveLocalFilesystemUrl( this.file.dataDirectory.toString().concat('uploads') )
@@ -112,7 +118,7 @@ export class CakeCreatorSettings {
 
         const saveToSQLite = (path: string) => {
             
-            let filename = this.helpers.toFileName(path) + '.jpg';
+            let filename = this.helpers.toFileName(path);
 
             let promise = new Promise( (resolve, reject) => {
                 this.sqlite.create({
@@ -124,7 +130,9 @@ export class CakeCreatorSettings {
                         `INSERT INTO cake_entries VALUES (?, ?)`,
                         [
                             filename,
-                            path
+                            path,
+                            moment().format('YYYY-MM-DD HH:MM:SS'),
+                            moment().format('YYYY-MM-DD HH:MM:SS')
                         ])
                         .then( (res) => { 
                             resolve();

@@ -68,7 +68,9 @@ export class UserSettings {
                 db.executeSql(
                             `CREATE TABLE IF NOT EXISTS cake_entries (
                                 name TEXT NOT NULL,
-                                pictureURL TEXT NOT NULL
+                                pictureURL TEXT NOT NULL,
+                                created_at TEXT NOT NULL,
+                                updated_at TEXT NOT NULL
                             )`, [])
 
                         .then( ()=> {

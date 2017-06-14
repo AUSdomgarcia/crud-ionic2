@@ -21,12 +21,12 @@ import { HomePage } from '../pages/home/home';
 import { MyApp } from './app.component';
 import { UserSettings, CameraSettings, Helpers, DeviceSettings, CakeCreatorSettings } from '../shared/shared';
 
-import { LoginPage } from '../pages/login/login';
-import { UserPage } from '../pages/user/user';
-import { UserDetailsPage } from '../pages/user-details/user-details';
-import { UserPopOverPage } from '../pages/user-pop-over/user-pop-over';
-import { StartupPage } from '../pages/startup/startup';
-import { CakeCreatorPage } from '../pages/cake-creator/cake-creator';
+// import { LoginPage } from '../pages/login/login';
+// import { UserPage } from '../pages/user/user';
+// import { UserDetailsPage } from '../pages/user-details/user-details';
+// import { UserPopOverPage } from '../pages/user-pop-over/user-pop-over';
+// import { StartupPage } from '../pages/startup/startup';
+// import { CakeCreatorPage } from '../pages/cake-creator/cake-creator';
 
 @NgModule({
   declarations: [
