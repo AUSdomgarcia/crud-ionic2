@@ -1,7 +1,7 @@
 import { ViewChild } from '@angular/core';
 import { DeviceSettings, CakeCreatorSettings } from '../../shared/shared';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Slides, ToastController } from 'ionic-angular';
+import { Events, IonicPage, NavController, NavParams, Slides, ToastController } from 'ionic-angular';
 import * as PIXI from 'pixi.js';
 
 
@@ -97,7 +97,8 @@ export class CakeCreatorPage {
     public navParams: NavParams,
     private deviceSettings: DeviceSettings,
     private cakeCreatorSettings: CakeCreatorSettings,
-    private toastCtrl: ToastController) {
+    private toastCtrl: ToastController,
+    private events: Events) {
       this.items = this.cakes;
     }
 
@@ -223,6 +224,7 @@ export class CakeCreatorPage {
             duration: 3000
           });
           t.present();
+          this.events.publish('cake:added');
         })
         .catch( (err) => {
           alert('cake-creator.ts SaveEntry Err ' + JSON.stringify(err))

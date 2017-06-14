@@ -1,7 +1,7 @@
 import { File } from '@ionic-native/file';
 import { CakeCreatorSettings, Helpers } from '../../shared/shared';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Events, IonicPage, NavController, NavParams } from 'ionic-angular';
 
 /**
  * Generated class for the CakesHomePage page.
@@ -22,11 +22,14 @@ export class CakesHomePage {
               public navParams: NavParams,
               private cakeCreatorSettings: CakeCreatorSettings,
               private file: File,
-              private helpers: Helpers) {}
+              private helpers: Helpers,
+              private events: Events) {}
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad CakesHomePage');
     this.refresh();
+
+    this.events.subscribe('cake:added', () => this.refresh() );
   }
 
   refresh(){

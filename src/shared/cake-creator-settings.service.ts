@@ -58,9 +58,10 @@ export class CakeCreatorSettings {
                         db.executeSql(`SELECT rowid, 
                                             name, 
                                             pictureURL, 
-                                            created_at, 
-                                            updated_at
-                                        FROM cake_entries`, [])
+                                            created_at
+                                        FROM cake_entries
+                                        ORDER BY rowid DESC
+                                        `, [])
                         .then( (result) => {
                             for(let i = 0; i < result.rows.length; i++){
                                 collections
@@ -127,7 +128,7 @@ export class CakeCreatorSettings {
                 })
                 .then( (db: SQLiteObject) => {
                     db.executeSql(
-                        `INSERT INTO cake_entries VALUES (?, ?)`,
+                        `INSERT INTO cake_entries VALUES (?, ?, ?, ?)`,
                         [
                             filename,
                             path,
