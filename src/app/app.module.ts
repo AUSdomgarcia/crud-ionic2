@@ -19,7 +19,14 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { HomePage } from '../pages/home/home';
 import { MyApp } from './app.component';
-import { UserSettings, CameraSettings, Helpers, DeviceSettings, CakeCreatorSettings } from '../shared/shared';
+import { UserSettings, 
+  CameraSettings, 
+  Helpers, 
+  DeviceSettings, 
+  CakeCreatorSettings,
+  SyncSettings,
+  NetworkSettings
+    } from '../shared/shared';
 
 // import { LoginPage } from '../pages/login/login';
 // import { UserPage } from '../pages/user/user';
@@ -74,6 +81,8 @@ import { UserSettings, CameraSettings, Helpers, DeviceSettings, CakeCreatorSetti
     DeviceSettings,
     Helpers,
     CakeCreatorSettings,
+    SyncSettings,
+    NetworkSettings,
     File,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

@@ -137,7 +137,6 @@ export class CakeCreatorSettings {
                         ])
                         .then( (res) => { 
                             resolve();
-                            // alert('SAVING SUCC ' + JSON.stringify(res) + ' filename: ' + filename + ' path: ' + path );
                         })
                         .catch( (err) => {
                             reject(err);

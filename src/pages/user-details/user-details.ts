@@ -66,8 +66,8 @@ export class UserDetailsPage {
   
   updateImageSrc(){
     if( ! this.user.pictureURL.includes('assets')){
-      //  this.helpers.toBase64(this.user.pictureURL)
-       this.helpers.toBase64('file:///data/data/io.ionic.prototypev5/files/uploads/cake_entriesAHRWhBQh.jpg')
+       this.helpers.toBase64(this.user.pictureURL)
+      //  this.helpers.toBase64('file:///data/data/io.ionic.prototypev5/files/uploads/cake_entriesAHRWhBQh.jpg')
       .then( (res) => {
         this.imgSrc = res;
       })
