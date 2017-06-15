@@ -1,3 +1,4 @@
+// import { IonicStorageModule } from '@ionic/storage';
 import { LoginPageModule } from '../pages/login/login.module';
 import { UserPageModule } from '../pages/user/user.module';
 import { UserDetailsPageModule } from '../pages/user-details/user-details.module';
@@ -6,6 +7,11 @@ import { StartupPageModule } from '../pages/startup/startup.module';
 import { CakeCreatorPageModule } from '../pages/cake-creator/cake-creator.module';
 import { CakesHomePageModule } from '../pages/cakes-home/cakes-home.module';
 import { CakeNavigationPageModule } from '../pages/cake-navigation/cake-navigation.module';
+
+import { SyncCmsPageModule } from '../pages/sync-cms/sync-cms.module';
+import { SyncListPageModule } from '../pages/sync-list/sync-list.module';
+import { SyncNavigationPageModule } from '../pages/sync-navigation/sync-navigation.module';
+
 import { Camera } from '@ionic-native/camera';
 import { File } from '@ionic-native/file';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -17,6 +23,7 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
+
 import { HomePage } from '../pages/home/home';
 import { MyApp } from './app.component';
 import { UserSettings, 
@@ -25,7 +32,8 @@ import { UserSettings,
   DeviceSettings, 
   CakeCreatorSettings,
   SyncSettings,
-  NetworkSettings
+  NetworkSettings,
+  WindowService
     } from '../shared/shared';
 
 // import { LoginPage } from '../pages/login/login';
@@ -58,7 +66,18 @@ import { UserSettings,
     CakeCreatorPageModule,
     CakesHomePageModule,
     CakeNavigationPageModule,
+
+    // Sync
+    SyncCmsPageModule,
+    SyncListPageModule,
+    SyncNavigationPageModule,
+    
     IonicModule.forRoot(MyApp)
+    // IonicStorageModule.forRoot({
+    //   name: '_4syncdb',
+    //   storeName: 'users',
+    //   driverOrder: ['sqlite', 'websql']
+    // })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -83,6 +102,7 @@ import { UserSettings,
     CakeCreatorSettings,
     SyncSettings,
     NetworkSettings,
+    WindowService,
     File,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

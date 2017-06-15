@@ -1,4 +1,6 @@
+import { SyncSettings } from '../shared/sync-settings.service';
 import { CakeNavigationPage } from '../pages/cake-navigation/cake-navigation';
+import { SyncNavigationPage } from '../pages/sync-navigation/sync-navigation';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Component, ViewChild } from '@angular/core';
@@ -25,33 +27,44 @@ export class MyApp {
               splashScreen: SplashScreen,
               userSettings: UserSettings,
               cameraSettings: CameraSettings,
-              deviceSettings: DeviceSettings) {
-
+              deviceSettings: DeviceSettings,
+              syncSettings: SyncSettings) {
+    
+    let isNative = false;
+    
     platform.ready().then((device) => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-      
-      statusBar.styleDefault();
+        // Okay, so the platform is ready and our plugins are available.
+        // Here you can do any higher level native things you might need.
+        statusBar.styleDefault();
 
-      splashScreen.hide();
+        splashScreen.hide();
 
-      let isNative = false;
+        alert('WHAT_HAPPEN?' + this.platform.is('cordova'));
+        
+        if(this.platform.is('cordova')){
+          isNative = true;
+          cameraSettings.initFileDirectory(this.platform);
+          deviceSettings.add(platform); 
+          userSettings.initSQLite(isNative);
+          this.rootPage = HomePage;
+        }
+        
+        // initial full native sql
 
-      alert('WHAT_HAPPEN?' + this.platform.is('cordova'));
-       
-      if(this.platform.is('cordova')){
-        isNative = true;
-        this.rootPage = HomePage;
-        userSettings.initSQLite(isNative);
-        cameraSettings.initFileDirectory(this.platform);
-        deviceSettings.add(platform);
-      }
+        // dynamic Database: use sqlite when native and Websql if not
+        syncSettings.assignDB(isNative);
     });
   }
 
   toggleCanvas(){
     if(this.nav.getActive().name !== 'CakeNavigationPage'){
       this.nav.push(CakeNavigationPage);
+    }
+  }
+
+  toggleSyncManager(){
+    if(this.nav.getActive().name !== 'SyncNavigationPage'){
+      this.nav.push(SyncNavigationPage);
     }
   }
 
