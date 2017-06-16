@@ -46,13 +46,12 @@ export class MyApp {
           cameraSettings.initFileDirectory(this.platform);
           deviceSettings.add(platform); 
           userSettings.initSQLite(isNative);
+          syncSettings.initDatabase(isNative);
           this.rootPage = HomePage;
+          
+        } else {
+          syncSettings.initDatabase(isNative);
         }
-        
-        // initial full native sql
-
-        // dynamic Database: use sqlite when native and Websql if not
-        syncSettings.assignDB(isNative);
     });
   }
 

@@ -3,7 +3,7 @@
     <name>prototypev5</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
-    <content original-src="index.html" src="http://172.16.100.91:8101" />
+    <content original-src="index.html" src="http://172.16.100.91:8100" />
     <access origin="*" />
     <allow-navigation href="http://ionic.local/*" />
     <allow-navigation href="http://172.16.100.86:8100" />

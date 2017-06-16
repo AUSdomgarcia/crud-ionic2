@@ -6,3 +6,5 @@ export * from './cake-creator-settings.service';
 export * from './sync-settings.service';
 export * from './network-settings.service';
 export * from './windowService';
+export * from './api-settings.service';
+

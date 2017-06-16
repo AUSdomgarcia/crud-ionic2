@@ -1,4 +1,4 @@
-import { SyncSettings } from '../../shared/sync-settings.service';
+import { ApiSettings, SyncSettings } from '../../shared/shared';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
@@ -15,39 +15,15 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class SyncListPage {
 
+  students;
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
-              private syncSettings: SyncSettings) {}
+              private syncSettings: SyncSettings,
+              private apiSettings: ApiSettings) {}
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SyncListPage');
 
-    let query = `
-                CREATE TABLE IF NOT EXISTS LOGS (id unique, log)
-                `;
-    let data = [];
-
-    this.syncSettings.queryBuilder(query, data)
-      .then((res) => {
-        alert('Created! ' + JSON.stringify(res) + ' ' + this.syncSettings.getDB().type);
-        this.insertdataTest();
-      })
-      .catch((err) => {
-        alert(JSON.stringify(err));
-      });
-  }
-
-  insertdataTest(){
-    let query = `
-                INSERT INTO LOGS (id, log) VALUES(?,?)
-                `;
-    let data = [5, 'Rowi'];
-
-    this.syncSettings.queryBuilder(query, data)
-      .then((res) => {
-        alert('Inserted! ' + JSON.stringify(res) + ' ' + this.syncSettings.getDB().type);
-      })
-      .catch((err) => {
-        alert(JSON.stringify(err));
-      });
+    this.apiSettings.getStudents().then( res => console.log(res) );
   }
 }

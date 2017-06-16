@@ -14,14 +14,14 @@ import { SyncNavigationPageModule } from '../pages/sync-navigation/sync-navigati
 
 import { Camera } from '@ionic-native/camera';
 import { File } from '@ionic-native/file';
-import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { SQLite } from '@ionic-native/sqlite';
-
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { StatusBar } from '@ionic-native/status-bar';
+import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpModule } from '@angular/http';
 
 
 import { HomePage } from '../pages/home/home';
@@ -33,7 +33,8 @@ import { UserSettings,
   CakeCreatorSettings,
   SyncSettings,
   NetworkSettings,
-  WindowService
+  WindowService,
+  ApiSettings
     } from '../shared/shared';
 
 // import { LoginPage } from '../pages/login/login';
@@ -67,6 +68,7 @@ import { UserSettings,
     CakesHomePageModule,
     CakeNavigationPageModule,
 
+    HttpModule,
     // Sync
     SyncCmsPageModule,
     SyncListPageModule,
@@ -103,6 +105,7 @@ import { UserSettings,
     SyncSettings,
     NetworkSettings,
     WindowService,
+    ApiSettings,
     File,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
