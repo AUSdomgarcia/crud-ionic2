@@ -1,4 +1,4 @@
-import { SyncSettings } from '../shared/sync-settings.service';
+import { SyncSettings, NetworkSettings } from '../shared/shared';
 import { CakeNavigationPage } from '../pages/cake-navigation/cake-navigation';
 import { SyncNavigationPage } from '../pages/sync-navigation/sync-navigation';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -28,7 +28,8 @@ export class MyApp {
               userSettings: UserSettings,
               cameraSettings: CameraSettings,
               deviceSettings: DeviceSettings,
-              syncSettings: SyncSettings) {
+              syncSettings: SyncSettings,
+              networkSettings: NetworkSettings) {
     
     let isNative = false;
     
@@ -49,8 +50,14 @@ export class MyApp {
           syncSettings.initDatabase(isNative);
           this.rootPage = HomePage;
           
+          networkSettings.init();
+
         } else {
+          console.log('=else=');
+          
           syncSettings.initDatabase(isNative);
+
+          networkSettings.init();
         }
     });
   }

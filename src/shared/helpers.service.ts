@@ -51,4 +51,17 @@ export class Helpers {
         var bb = new Blob([ab]);
         return bb;
     }
+    
+    objSize(obj) {
+        let count = 0;
+        let i;
+
+        for (let i in obj) {
+            if (obj.hasOwnProperty(i)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
 }

@@ -12,10 +12,11 @@ export class SyncSettings {
     constructor(private sqlite: SQLite){}
     
     initDatabase(isNative: boolean){
-        let query = `CREATE TABLE IF NOT EXISTS Students (
+        let query = `CREATE TABLE IF NOT EXISTS students (
                                 name TEXT NOT NULL,
                                 age INTEGER NOT NULL,
                                 information TEXT NOT NULL,
+                                level TEXT NOT NULL,
                                 created_at TEXT NOT NULL,
                                 updated_at TEXT NOT NULL
                             )`;
@@ -98,7 +99,10 @@ export class SyncSettings {
                         .transaction( (tx: any) => {
                             tx.executeSql(query, data, (tx, results) => { 
                                 resolve(results);
-                            }, null);
+                            }, (t, err) => {
+                                console.log(err)
+                                reject(JSON.stringify(err));
+                            });
                     });
                 break;
             }

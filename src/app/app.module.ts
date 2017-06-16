@@ -12,6 +12,7 @@ import { SyncCmsPageModule } from '../pages/sync-cms/sync-cms.module';
 import { SyncListPageModule } from '../pages/sync-list/sync-list.module';
 import { SyncNavigationPageModule } from '../pages/sync-navigation/sync-navigation.module';
 
+import { Network } from '@ionic-native/network';
 import { Camera } from '@ionic-native/camera';
 import { File } from '@ionic-native/file';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -23,11 +24,10 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
 
-
 import { HomePage } from '../pages/home/home';
 import { MyApp } from './app.component';
 import { UserSettings, 
-  CameraSettings, 
+CameraSettings,
   Helpers, 
   DeviceSettings, 
   CakeCreatorSettings,
@@ -106,6 +106,7 @@ import { UserSettings,
     NetworkSettings,
     WindowService,
     ApiSettings,
+    Network,
     File,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

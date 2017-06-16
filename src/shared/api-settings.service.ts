@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 
 export class ApiSettings {
 
-    private baseUrl = 'https://prototypesyncmodule.firebaseio.com/';
+    private baseUrl = 'https://prototypesyncmodule.firebaseio.com';
 
     constructor(private http: Http) {
         //
@@ -15,7 +15,7 @@ export class ApiSettings {
 
     getStudents(){
         return new Promise( (resolve, reject) => {
-            this.http.get(`${this.baseUrl}/prototypesyncmodule.json`)
+            this.http.get(`${this.baseUrl}/students.json`)
                      .subscribe( (res) => {
                         resolve(res.json());
                      });
