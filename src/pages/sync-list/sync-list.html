@@ -28,7 +28,7 @@
     <ion-item *ngFor="let student of students">
 
       <ion-toolbar color="secondary">
-        <ion-title>Student # {{ student?.rowid}}</ion-title>
+        <ion-title>Student # {{ student?.age}}</ion-title>
       </ion-toolbar>
 
       <ion-row>
@@ -66,6 +66,18 @@
             {{ student?.level }}
           </ion-col>
       </ion-row>
+
+      <ion-row>
+          <ion-col col-6>
+            <strong>Last updated</strong>
+          </ion-col>
+          <ion-col col-6>
+            <small>
+            {{ student?.updated_at | date: 'medium' }}
+            </small>
+          </ion-col>
+      </ion-row>
+      
 
     </ion-item>
     
