@@ -7,6 +7,7 @@ import { StartupPageModule } from '../pages/startup/startup.module';
 import { CakeCreatorPageModule } from '../pages/cake-creator/cake-creator.module';
 import { CakesHomePageModule } from '../pages/cakes-home/cakes-home.module';
 import { CakeNavigationPageModule } from '../pages/cake-navigation/cake-navigation.module';
+import { EditStudentPageModule } from '../pages/edit-student/edit-student.module';
 
 import { SyncCmsPageModule } from '../pages/sync-cms/sync-cms.module';
 import { SyncListPageModule } from '../pages/sync-list/sync-list.module';
@@ -67,7 +68,7 @@ CameraSettings,
     CakeCreatorPageModule,
     CakesHomePageModule,
     CakeNavigationPageModule,
-
+    EditStudentPageModule,
     HttpModule,
     // Sync
     SyncCmsPageModule,

@@ -19,16 +19,29 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-list>  
 
-    <ion-list-header>
+  <ion-list-header>
       Outstanding Students of Manila
-    </ion-list-header>
+  </ion-list-header>
 
-    <ion-item *ngFor="let student of students">
+  <ion-list [virtualScroll]="students" 
+            [approxItemHeight]="'132px'">
+
+    <ion-item *virtualItem = "let student">
 
       <ion-toolbar color="secondary">
-        <ion-title>Student # {{ student?.age}}</ion-title>
+        <ion-title >Student # {{ student?._id}}</ion-title>
+
+        <button (click)="toggleUpdate(student)" ion-button color="default" small>
+          <span>EDIT&nbsp;&nbsp;</span>
+          <ion-icon name="create" item-end></ion-icon>
+        </button>
+
+        <button (click)="toggleDelete(student?._id)" ion-button color="danger" small> 
+          <span>DELETE&nbsp;&nbsp;</span>
+          <ion-icon name="trash" item-end></ion-icon>
+        </button>
+
       </ion-toolbar>
 
       <ion-row>

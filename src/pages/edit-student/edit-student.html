@@ -7,16 +7,15 @@
 <ion-header>
 
   <ion-navbar>
-    <!--<ion-title>sync-cms</ion-title>-->
+    <ion-title>Edit Student</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  Student Management
 
-  <form (ngSubmit)="toggleAddStudent(student)">
+  <form (ngSubmit)="toggleUpdateStudent(student)">
 
       <ion-item>
         <ion-label>Name</ion-label>
@@ -38,7 +37,7 @@
         <ion-input type="text" [(ngModel)]="student.level" name="level"></ion-input>
       </ion-item>
 
-      <button ion-button type="submit" block>Add Student</button>
+      <button ion-button type="submit" block>Update Student</button>
     </form>
 
 </ion-content>

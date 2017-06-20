@@ -74,7 +74,9 @@ export class MyApp {
   }
 
   toggleSyncManager(){
-    if(this.nav.getActive().name !== 'SyncNavigationPage'){
+    console.log('MY ACTIVE PAGE: ', this.nav.getActive().name );
+
+    if((this.nav.getActive().name !== 'SyncNavigationPage') && (this.nav.getActive().name !== 'EditStudentPage')){
       this.nav.push(SyncNavigationPage);
     }
   }

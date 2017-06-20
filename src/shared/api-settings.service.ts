@@ -3,6 +3,7 @@ import { Http, Response } from '@angular/http';
 import 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase';
+import { Helpers } from './shared';
 
 @Injectable()
 
@@ -12,7 +13,8 @@ export class ApiSettings {
 
     private baseUrl = 'https://prototypesyncmodule.firebaseio.com';
 
-    constructor(private http: Http) {
+    constructor(private http: Http,
+                private helpers: Helpers) {
         let config = {
             apiKey: "AIzaSyAAws_4wBh84H4wK24On__b66q3Qx9iSHM",
             authDomain: "prototypesyncmodule.firebaseapp.com",
@@ -43,7 +45,59 @@ export class ApiSettings {
         });
     }
 
-    checkUpdates(timestamp){
+    addStudent(student){
+        return new Promise( (resolve, reject) => {
+            const timestamp = Date.now();
+            const generated_hash_id = this.helpers.toHashName();
+
+            this.firebase_api
+                .database()
+                .ref('/students')
+                .child(generated_hash_id)
+                    .set({
+                        _id: generated_hash_id,
+                        action: 'create', 
+                        age: parseInt(student.age), 
+                        created_at: timestamp, 
+                        information: student.information, 
+                        inverted_ts: -1 * timestamp, 
+                        level: student.level, 
+                        name: student.name, 
+                        updated_at: timestamp, 
+                    }, 
+                    (err) => {
+                        if(err){
+                            reject(err);
+                        } else {
+                            resolve('DOMZKIE say YAHOO!');
+                        }
+                    });
+        });
+    }
+
+    deleteStudent(id){
+        return new Promise( (resolve, reject) => {
+            const timestamp = Date.now();
+
+            this.firebase_api
+                .database()
+                .ref('/students')
+                .child(id)
+                    .update({
+                        'action':'delete',
+                        'updated_at': timestamp
+                    }, 
+                    (err) => {
+                        if(err){
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
+        });
+    }
+
+    checkUpdateByUpdatedAt(timestamp){
         return new Promise( (resolve, reject) => {
             let end = Date.now();
             let start   = timestamp + 1;
@@ -63,6 +117,32 @@ export class ApiSettings {
                 (err) => {
                     reject(err);
                 });
+        });
+    }
+
+    updateStudentDetails(student){
+        return new Promise( (resolve, reject) => {
+            const timestamp = Date.now();
+
+            this.firebase_api
+                .database()
+                .ref('/students')
+                .child(student._id)
+                    .update({
+                        action: 'update',
+                        name: student.name,
+                        age: student.age,
+                        information: student.information,
+                        level: student.level,
+                        updated_at : timestamp
+                    },
+                    (err) => {
+                        if(err){
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
         });
     }
 }

@@ -13,6 +13,8 @@ export class SyncSettings {
     
     initDatabase(isNative: boolean){
         let query = `CREATE TABLE IF NOT EXISTS students (
+                                _id TEXT NOT NULL,
+                                action TEXT NOT NULL,
                                 name TEXT NOT NULL,
                                 age INTEGER NOT NULL,
                                 information TEXT NOT NULL,
@@ -79,31 +81,13 @@ export class SyncSettings {
             switch(this.settings.type){
 
                 case 'sqlite':
-                    // this.sqlite.create({
-                    //     name: 'syncDB.db',
-                    //     location: 'default'
-                    // })
-                    // .then( (db: SQLiteObject) => {
-                    //         db.executeSql(query, data)
-                    //             .then( (res) => {
-                    //                 resolve(res);
-                    //             })
-                    //             .catch((err)=>{
-                    //                 reject(err);
-                    //             });
-                    //     })
-                    //     .catch( (err) => {
-                    //         reject(err);
-                    //     });
-
-                        this.settings.db.executeSql(query, data)
-                                .then( (res) => {
-                                    resolve(res);
-                                })
-                                .catch((err)=>{
-                                    reject(err);
-                                });
-                    
+                    this.settings.db.executeSql(query, data)
+                            .then( (res) => {
+                                resolve(res);
+                            })
+                            .catch((err)=>{
+                                reject(err);
+                            });
                 break;
 
                 case 'websql':

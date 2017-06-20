@@ -34,7 +34,7 @@ export class NetworkSettings {
         });
 
         this.connectSubscription = this.network.onConnect().subscribe(() => {
-            this.hasNetwork = false;
+            this.hasNetwork = true;
             console.log('network connected!');
         });
     }
