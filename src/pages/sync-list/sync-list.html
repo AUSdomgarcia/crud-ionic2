@@ -1,0 +1,86 @@
+<!--
+  Generated template for the SyncListPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <!--<ion-title>sync-list</ion-title>-->
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  
+  <ion-refresher (ionRefresh)="refreshAll($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list>  
+
+    <ion-list-header>
+      Outstanding Students of Manila
+    </ion-list-header>
+
+    <ion-item *ngFor="let student of students">
+
+      <ion-toolbar color="secondary">
+        <ion-title>Student # {{ student?.age}}</ion-title>
+      </ion-toolbar>
+
+      <ion-row>
+          <ion-col col-6>
+            <strong>Name</strong>
+          </ion-col>
+          <ion-col col-6>
+            {{ student?.name }}
+          </ion-col>
+      </ion-row>
+
+      <ion-row>
+          <ion-col col-6>
+            <strong>Age</strong>
+          </ion-col>
+          <ion-col col-6>
+            {{ student?.age }}
+          </ion-col>
+      </ion-row>
+
+      <ion-row>
+          <ion-col col-6>
+            <strong>Information</strong>
+          </ion-col>
+          <ion-col col-6>
+            {{ student?.information }}
+          </ion-col>
+      </ion-row>
+
+      <ion-row>
+          <ion-col col-6>
+            <strong>Level</strong>
+          </ion-col>
+          <ion-col col-6>
+            {{ student?.level }}
+          </ion-col>
+      </ion-row>
+
+      <ion-row>
+          <ion-col col-6>
+            <strong>Last updated</strong>
+          </ion-col>
+          <ion-col col-6>
+            <small>
+            {{ student?.updated_at | date: 'medium' }}
+            </small>
+          </ion-col>
+      </ion-row>
+      
+
+    </ion-item>
+    
+  </ion-list>
+
+</ion-content>

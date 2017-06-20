@@ -1,0 +1,95 @@
+<!--
+  Generated template for the CakeCreatorPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<style>
+  .slider-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    z-index: 2;
+    background-color: #6e3527;
+    padding: 10px;
+    padding-top: 0;
+  }
+
+  .itemWrapper .name {
+    background-color: #fff;
+    margin: 0px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    font-size: .8em;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -o-border-radius: 10px;
+  }
+  
+  .itemWrapper {
+    text-align: center;
+    background-color: #fcce01;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -o-border-radius: 10px;
+    padding: 10px;
+  }
+
+  .itemWrapper img {
+    max-width: 100%;
+    width: 100%;
+    display: inline-block;
+  }
+
+  .tab-option {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #6e3527;
+    font-weight: bold;
+    color: #fcce01;
+    max-height: 33px;
+  }
+  
+  .tab-option.active {
+    background-color: #fff;
+    color: #000;
+  }
+</style>
+
+<ion-header>
+  <ion-navbar>
+    <ion-title>Canvas Experiment</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <button ion-button (click)="toggleToURL()">to_base64</button>
+
+  <div class="slider-container">
+    <button (click)="toggleActive(1)" ion-button class="tab-option" [class.active]="currentTab===1">Cakes</button>
+    <button (click)="toggleActive(2)" ion-button class="tab-option" [class.active]="currentTab===2">Candles</button>
+    <button (click)="toggleActive(3)" ion-button class="tab-option" [class.active]="currentTab===3">Messages</button>
+
+    <ion-slides 
+      id="items" 
+      [slidesPerView]="3" 
+      [spaceBetween]="5">
+
+      <ion-slide class="itemWrapper" *ngFor="let item of items" (click)="toggleSelectItem(item)">
+        <img src="{{ item?.img }}" alt="{{ item?.name }}">
+        <div class="name">{{ item.name }}</div>
+      </ion-slide>
+    </ion-slides>
+  </div>
+
+  <div id="canvas-container"></div>
+
+</ion-content>

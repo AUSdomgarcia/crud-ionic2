@@ -8,7 +8,7 @@ export class UserSettings {
 
     constructor(private sqlite: SQLite, private events:Events ){}
 
-    truncateDB(){
+    truncateTable(){
         this.sqlite.create({
             name: 'prototype.db',
             location: 'default'
@@ -39,7 +39,7 @@ export class UserSettings {
     }
     
     initSQLite(isNative){
-        // this.truncateDB();
+        // this.truncateTable();
 
         if(isNative){
             this.sqlite.create({
@@ -47,6 +47,8 @@ export class UserSettings {
                 location: 'default'
             })
             .then( (db: SQLiteObject) => {
+
+                // Users DB
                 db.executeSql(
                         `CREATE TABLE IF NOT EXISTS users (
                             email TEXT NOT NULL,
@@ -60,7 +62,21 @@ export class UserSettings {
                         .then(() => { 
                             // alert('NATIVE sql successfully!') 
                         })
-                        .catch( (e) => alert('CREATE_ERROR ' + JSON.stringify(e)) );
+                        .catch( (e) => alert('CREATE_USER_DB_ERROR ' + JSON.stringify(e)) );
+                
+                // Canvas upload DB
+                db.executeSql(
+                            `CREATE TABLE IF NOT EXISTS cake_entries (
+                                name TEXT NOT NULL,
+                                pictureURL TEXT NOT NULL,
+                                created_at TEXT NOT NULL,
+                                updated_at TEXT NOT NULL
+                            )`, [])
+
+                        .then( ()=> {
+                            //
+                        })
+                        .catch( (e) => alert('CREATE_CANVAS_UPLOAD_DB_ERROR ' + JSON.stringify(e)) );
             })
             .catch( (e)=> { alert('DB_CONN_ERROR_INIT ' + JSON.stringify(e)) });
         }

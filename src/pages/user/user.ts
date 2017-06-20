@@ -1,3 +1,4 @@
+import { Helpers } from '../../shared/helpers.service';
 import { DirectoryEntry } from '@ionic-native/file';
 import { UserSettings, CameraSettings } from '../../shared/shared';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -51,6 +52,7 @@ export class UserPage {
               private actionSheetCtrl: ActionSheetController,
               public platform: Platform,
               private cameraSettings: CameraSettings,
+              private helpers: Helpers,
               private toastCtrl: ToastController) {
 
                 this.formGroup = this.formBuilder.group({
@@ -135,7 +137,7 @@ export class UserPage {
         this.rawPath = this.user.pictureURL;
 
         if( ! this.user.pictureURL.includes('assets')){
-          this.cameraSettings.toBase64(this.user.pictureURL)
+          this.helpers.toBase64(this.user.pictureURL)
             .then( (res) => {
               this.imgSrc = res;
             })
@@ -201,7 +203,7 @@ export class UserPage {
       .then( (res: DirectoryEntry) => {
         this.rawPath = res.nativeURL;
 
-        this.cameraSettings.toBase64(res.nativeURL)
+        this.helpers.toBase64(res.nativeURL)
           .then( (base64) => {
             this.imgSrc = base64;
           })

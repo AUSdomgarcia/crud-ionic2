@@ -1,5 +1,5 @@
 import { File } from '@ionic-native/file';
-import { UserSettings } from '../../shared/shared';
+import { Helpers, UserSettings } from '../../shared/shared';
 import { Component } from '@angular/core';
 import { Events, NavController, NavParams, Platform, ToastController } from 'ionic-angular';
 import { UserPage } from '../user/user';
@@ -20,7 +20,7 @@ export class HomePage {
               private events: Events,
               private toastCtrl: ToastController,
               private platform: Platform,
-              
+              private helpers: Helpers,
               private file: File) { this.users = []; }
   
   toogleAddUser(){
@@ -48,7 +48,7 @@ export class HomePage {
               promises.push(
                 this.file.readAsDataURL(
                 user.pictureURL.substring(0, user.pictureURL.lastIndexOf('/') + 1),
-                this.getFileName(user.pictureURL) + '.' + this.getFileExtension(user.pictureURL))
+                this.helpers.toFileName(user.pictureURL) + '.' + this.helpers.toFileExtension(user.pictureURL))
               );
             }
           ///
@@ -84,19 +84,5 @@ export class HomePage {
         this.navCtrl.push(UserDetailsPage, result);
      })
     .catch( (e) => { alert(JSON.stringify(e)) });
-  }
-
-  getFileExtension = function(url) {
-      return url.split('.').pop().split(/\#|\?/)[0];
-  }
-
-  getFileName(url) {
-      if (url) {
-          var m = url.toString().match(/.*\/(.+?)\./);
-          if (m && m.length > 1) {
-              return m[1];
-          }
-      }
-      return '';
   }
 }

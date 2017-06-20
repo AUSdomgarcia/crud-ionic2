@@ -1,0 +1,39 @@
+<!--
+  Generated template for the CakesHomePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+
+<style>
+  .bordered {
+    border: 1px solid #ccc;
+  }
+</style>
+
+<ion-header>
+
+  <ion-navbar>
+    <!--<ion-title>cakes-home</ion-title>-->
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+  <ion-list [virtualScroll]="cakes" [approxItemHeight]="'132px'">
+    <ion-card *virtualItem="let cake">
+      <img class="bordered" src="{{ cake?.fixURL }}" alt="{{ cake?.name}}">
+      <ion-card-content>
+        
+        <ion-card-title>
+          {{ cake?.name }}
+        </ion-card-title>
+        
+        <p>Lorem ipsum<p>
+          
+        <p><strong>Created At:</strong> {{ cake?.created_at }}<p>
+
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+</ion-content>
