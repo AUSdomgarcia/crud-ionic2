@@ -44,10 +44,15 @@ export class MyApp {
         
         if(this.platform.is('cordova')){
           isNative = true;
+
           cameraSettings.initFileDirectory(this.platform);
+
           deviceSettings.add(platform); 
+
           userSettings.initSQLite(isNative);
+
           syncSettings.initDatabase(isNative);
+          
           this.rootPage = HomePage;
           
           networkSettings.init();

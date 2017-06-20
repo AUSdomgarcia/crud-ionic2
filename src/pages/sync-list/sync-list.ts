@@ -38,7 +38,7 @@ export class SyncListPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad SyncListPage');
     
-    if( ! this.networkSettings.isAvailable()){
+    if(this.networkSettings.isAvailable()){
       
       this.initialDBSync();
 
@@ -64,7 +64,7 @@ export class SyncListPage {
       }
     })
     .catch( (err) => {
-      alert(JSON.stringify(err));
+      alert('SYNC-LIST.ts checkEmptyDatabase ERR' + JSON.stringify(err));
     });
   }
 

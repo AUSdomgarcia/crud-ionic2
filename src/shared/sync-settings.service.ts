@@ -79,19 +79,31 @@ export class SyncSettings {
             switch(this.settings.type){
 
                 case 'sqlite':
-                    this.settings.db
-                        .then( (db: SQLiteObject) => {
-                            db.executeSql(query, data)
+                    // this.sqlite.create({
+                    //     name: 'syncDB.db',
+                    //     location: 'default'
+                    // })
+                    // .then( (db: SQLiteObject) => {
+                    //         db.executeSql(query, data)
+                    //             .then( (res) => {
+                    //                 resolve(res);
+                    //             })
+                    //             .catch((err)=>{
+                    //                 reject(err);
+                    //             });
+                    //     })
+                    //     .catch( (err) => {
+                    //         reject(err);
+                    //     });
+
+                        this.settings.db.executeSql(query, data)
                                 .then( (res) => {
                                     resolve(res);
                                 })
                                 .catch((err)=>{
                                     reject(err);
                                 });
-                        })
-                        .catch( (err) => {
-                            reject(err);
-                        });
+                    
                 break;
 
                 case 'websql':
