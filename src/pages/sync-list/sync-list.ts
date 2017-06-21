@@ -421,8 +421,9 @@ export class SyncListPage {
 
               if(collections.length===0){
                 console.log('binding to html', collections, this.students);
-                this.students.length = 0;
-                collections.length = 0;
+                // this.students.length = 0;
+                // collections.length = 0;
+                this.resetStudents();
               }
             }
         }
@@ -430,6 +431,10 @@ export class SyncListPage {
       .catch( (err) => {
         console.log('Sync-list.ts POPULATE ERROR');
       });
+  }
+
+  resetStudents(){
+    this.students.length = 0;
   }
   
   refreshAll(refresher){
