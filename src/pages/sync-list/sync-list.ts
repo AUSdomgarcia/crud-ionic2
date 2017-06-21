@@ -1,6 +1,6 @@
 import { Helpers, ApiSettings, NetworkSettings, SyncSettings } from '../../shared/shared';
 import { Component } from '@angular/core';
-import { AlertController, IonicPage, LoadingController, NavController, NavParams, ToastController } from 'ionic-angular';
+import { AlertController, IonicPage, LoadingController, NavController, NavParams, ToastController, Events } from 'ionic-angular';
 import { EditStudentPage } from '../edit-student/edit-student';
 import * as _ from 'lodash';
 
@@ -26,6 +26,8 @@ export class SyncListPage {
 
   refresherRef;
 
+  studentUpdateSubscribe: any;
+
   DO_NOTHING = {};
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
@@ -35,34 +37,41 @@ export class SyncListPage {
               private helpers: Helpers,
               private toastCtrl: ToastController,
               private loadingCtrl: LoadingController,
-              private alertCtrl: AlertController) {}
+              private alertCtrl: AlertController,
+              private events: Events) {}
 
   toggleUpdate(student){
-    console.log(student);
     this.navCtrl.parent.parent.push(EditStudentPage, student)
   }
 
   toggleDelete(id){
-    let confirm = this.alertCtrl.create({
-      title: 'Delete Entry',
-      message: 'Are you sure you want to delete ?',
-      buttons: [
-        {
-          text: 'Yes',
-          handler: () => {
-            this.deleteStudentById(id)
-          }
-        },
-        {
-          text: 'No',
-          handler: () => {
-            
-          }
-        }
-      ]
-    });
 
-    confirm.present();
+    if(this.networkSettings.isAvailable()){
+
+      let confirm = this.alertCtrl.create({
+        title: 'Delete Entry',
+        message: 'Are you sure you want to delete ?',
+        buttons: [
+          {
+            text: 'Yes',
+            handler: () => {
+              this.deleteStudentById(id)
+            }
+          },
+          {
+            text: 'No',
+            handler: () => {
+              
+            }
+          }
+        ]
+      });
+      confirm.present();
+
+    } else {
+      this.presentToast('No internet available.');
+    }
+
   }
 
   deleteStudentById(id){
@@ -76,17 +85,41 @@ export class SyncListPage {
       })
   }
 
+  ionViewWillEnter(){
+    console.log('will enter');
+    // Subscribe::
+    this.studentUpdateSubscribe = () => {
+      this.checkDBupdates();
+    };
+    this.events.subscribe('student:update', this.studentUpdateSubscribe);
+  }
+
+  ionViewWillLeave(){
+    if(this.studentUpdateSubscribe){
+      this.events.unsubscribe('student:update', this.studentUpdateSubscribe);
+      this.studentUpdateSubscribe = null;
+    }
+  }
+
   ionViewDidLoad() {
     console.log('ionViewDidLoad SyncListPage');
+
+    
+    // Subscribe::
+
+
+
     
     if(this.networkSettings.isAvailable()){
+
+      alert('Has Internet.');
       
       this.initialDBSync();
 
     } else {
       // TODO: 
       // At start, internet is required to sync initial database from the server to app.
-      alert('No internet.');
+      alert('No Internet.');
 
       this.processOffline();
     }
@@ -113,8 +146,6 @@ export class SyncListPage {
       let promises = [];
       let query;
       let items = [];
-
-      console.log(res);
 
       _.map(res, (student, key) => {
 
@@ -258,9 +289,11 @@ export class SyncListPage {
     this.checkEmptyDatabase()
     .then( (res: any) => {
 
+      console.log('----CURRENT DB ITEM(s)------->', res.rows.length)
+
       if(res.rows.length !== 0){
 
-        this.getStudents()
+        this.getStudentsFromSQLite()
 
         .then( (res: any) => {
 
@@ -268,11 +301,13 @@ export class SyncListPage {
 
           this.apiSettings 
 
-            .checkUpdateByUpdatedAt(timestamp)
+            .checkUpdateByTimestamp(timestamp)
 
               .then( (res) => {
                   
                   if( ! _.isEmpty(res)){
+
+                    console.log('has changes on object:', res);
 
                     this.updateLocalDatabase(res);
 
@@ -294,7 +329,7 @@ export class SyncListPage {
               });
         })
         .catch( (err) => {
-          alert('SNYC-LIST.ts getStudents ERR ' + JSON.stringify(err));
+          alert('SNYC-LIST.ts getStudentsFromSQLite ERR ' + JSON.stringify(err));
         });
 
       }
@@ -338,7 +373,7 @@ export class SyncListPage {
     toast.present();
   }
 
-  getStudents(){
+  getStudentsFromSQLite(){
     let collections = [];
     let query = `SELECT rowid, _id, name, age, information, level, created_at, updated_at, action
                   FROM students
@@ -361,10 +396,13 @@ export class SyncListPage {
 
   populateStudents(){
     let collections = [];
+    this.students = [];
 
-    this.getStudents()
+    this.getStudentsFromSQLite()
       .then( (res: any) => {
+
         for(let i = 0; i < res.rows.length; i++){
+
             if(res.rows.item(i).action !== 'delete'){
               collections.push({
                 _id: res.rows.item(i)._id,
@@ -377,8 +415,15 @@ export class SyncListPage {
                 updated_at: res.rows.item(i).updated_at,
               });
             }
+
             if(i === res.rows.length - 1){
               this.students = collections;
+
+              if(collections.length===0){
+                console.log('binding to html', collections, this.students);
+                this.students.length = 0;
+                collections.length = 0;
+              }
             }
         }
       })
@@ -388,9 +433,14 @@ export class SyncListPage {
   }
   
   refreshAll(refresher){
-    // TODO: check connection before allow to pull
-
     this.refresherRef = refresher;
-    this.checkDBupdates();
+
+    // TODO: check connection before allow to pull
+    if( this.networkSettings.isAvailable() ){
+      this.checkDBupdates();
+    } else {
+      this.refresherRef.complete();
+      this.presentToast('No internet available.');
+    }
   }
 }

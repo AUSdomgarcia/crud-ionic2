@@ -1,7 +1,8 @@
 import { ApiSettings } from '../../shared/api-settings.service';
+import { NetworkSettings } from '../../shared/shared';
 
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
+import { Events, IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 
 /**
  * Generated class for the EditStudentPage page.
@@ -22,7 +23,9 @@ export class EditStudentPage {
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
               private apiSettings: ApiSettings,
-              private toastCtrl: ToastController) {
+              private toastCtrl: ToastController,
+              private events: Events,
+              private networkSettings: NetworkSettings) {
     this.student = navParams.data; 
   }
 
@@ -31,22 +34,35 @@ export class EditStudentPage {
   }
 
   toggleUpdateStudent(student){
+    let toastr;
 
-    this.apiSettings.updateStudentDetails(student)
+    if(this.networkSettings.isAvailable()){
+      //  
+      this.apiSettings.updateStudentDetails(student)
       .then( (res) => {
         // alert('EDIT-STUDENT.ts updateStudentDetails SUC ' + JSON.stringify(res));
-        let toastr = this.toastCtrl.create({
+        toastr = this.toastCtrl.create({
           message: 'Updated student successfully!',
           duration: 3000
         });
 
         toastr.present();
+        
+        this.events.publish('student:update');
+
+        this.navCtrl.pop();
 
       })
       .catch( (err) => {
         alert('EDIT-STUDENT.ts updateStudentDetails ERR ' + JSON.stringify(err));
-      })
-    
+      });
+      //
+    } else {
+        toastr = this.toastCtrl.create({
+          message: 'No internet available.',
+          duration: 3000
+        });
+        toastr.present();
+    }
   }
-
 }

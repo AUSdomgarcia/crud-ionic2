@@ -97,10 +97,10 @@ export class ApiSettings {
         });
     }
 
-    checkUpdateByUpdatedAt(timestamp){
+    checkUpdateByTimestamp(timestamp){
         return new Promise( (resolve, reject) => {
-            let end = Date.now();
-            let start   = timestamp + 1;
+            let end   = Date.now();
+            let start = timestamp + 1;
             
             this.firebase_api.database().ref('/students')
             .orderByChild('updated_at')
