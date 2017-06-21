@@ -18,7 +18,7 @@ import * as _ from 'lodash';
 })
 export class SyncListPage {
 
-  students = [];
+  students;
 
   initial_database_loader;
 
@@ -38,7 +38,10 @@ export class SyncListPage {
               private toastCtrl: ToastController,
               private loadingCtrl: LoadingController,
               private alertCtrl: AlertController,
-              private events: Events) {}
+              private events: Events) {
+
+                this.students = [];
+              }
 
   toggleUpdate(student){
     this.navCtrl.parent.parent.push(EditStudentPage, student)
