@@ -24,11 +24,14 @@
       Outstanding Students of Manila
   </ion-list-header>
 
-  <ion-list [virtualScroll]="students"
-            [approxItemHeight]="'132px'">
-
-    <ion-item *virtualItem = "let student">
-
+  <!--<ion-list *ngIf="students.length > 0" [virtualScroll]="students" [approxItemHeight]="'132px'">-->
+  
+  <ion-list>
+    
+    <!--<ion-item *virtualItem = "let student">-->
+  
+    <ion-item *ngFor="let student of students">
+      
       <ion-toolbar color="secondary">
         <ion-title >Student # {{ student?._id}}</ion-title>
 

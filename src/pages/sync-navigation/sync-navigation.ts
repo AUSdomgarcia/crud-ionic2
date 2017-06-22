@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Tab, Tabs } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Tab, Tabs, Events } from 'ionic-angular';
 
 import { SyncCmsPage } from '../sync-cms/sync-cms';
 import { SyncListPage } from '../sync-list/sync-list';
@@ -22,7 +22,7 @@ export class SyncNavigationPage {
   syncCms;
   syncList;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private events: Events) {
     this.syncCms = SyncCmsPage;
     this.syncList = SyncListPage;
   }
@@ -31,8 +31,13 @@ export class SyncNavigationPage {
     console.log('ionViewDidLoad SyncNavigationPage');
   }
 
-  tabSelected(tab: Tab){
-    //
+  ionViewWillLeave(){
+    let listPage: SyncListPage = this.tabOpt.getSelected().root;
+    console.log(listPage);
+  }
+
+  tabSelected(tab){
+    console.log(tab);
   }
 
 }

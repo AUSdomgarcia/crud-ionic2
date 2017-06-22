@@ -18,7 +18,7 @@ import * as _ from 'lodash';
 })
 export class SyncListPage {
 
-  students;
+  students = [];
 
   initial_database_loader;
 
@@ -30,6 +30,8 @@ export class SyncListPage {
 
   DO_NOTHING = {};
 
+  navigationLeaveSubscribe;
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private syncSettings: SyncSettings,
               private apiSettings: ApiSettings,
@@ -40,11 +42,16 @@ export class SyncListPage {
               private alertCtrl: AlertController,
               private events: Events) {
 
-                this.students = [];
+                // this.students = [];
+                console.log('>>>', this.navCtrl.parent);
               }
 
+  destroySubscriber(){
+    console.log('I was called');
+  }
+
   toggleUpdate(student){
-    this.navCtrl.parent.parent.push(EditStudentPage, student)
+    this.navCtrl.parent.parent.push(EditStudentPage, student);
   }
 
   toggleDelete(id){
@@ -80,8 +87,9 @@ export class SyncListPage {
   deleteStudentById(id){
     this.apiSettings.deleteStudent(id)
       .then( (res) =>{
-        // alert('SYNC-LIST deleteStudentById SUC' + JSON.stringify(res));
+
         this.checkDBupdates();
+
       })
       .catch( (err) =>{
         alert('SYNC-LIST deleteStudentById ERR' + JSON.stringify(err));
@@ -90,34 +98,41 @@ export class SyncListPage {
 
   ionViewWillEnter(){
     console.log('will enter');
-    // Subscribe::
+
+    this.clearSubscription();
+
     this.studentUpdateSubscribe = () => {
       this.checkDBupdates();
     };
+
     this.events.subscribe('student:update', this.studentUpdateSubscribe);
   }
 
-  ionViewWillLeave(){
+  clearSubscription(){
     if(this.studentUpdateSubscribe){
       this.events.unsubscribe('student:update', this.studentUpdateSubscribe);
       this.studentUpdateSubscribe = null;
     }
+
+    if(this.navigationLeaveSubscribe){
+      this.events.unsubscribe('navigation:leave', this.navigationLeaveSubscribe);
+      this.navigationLeaveSubscribe = null;
+    }
+  }
+
+  ionViewWillLeave(){
+    console.log('will leave WWWW');
+    this.clearSubscription();
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SyncListPage');
-
-    
-    // Subscribe::
-
-
-
     
     if(this.networkSettings.isAvailable()){
 
       alert('Has Internet.');
       
-      this.initialDBSync();
+      this.processOnline();
 
     } else {
       // TODO: 
@@ -145,74 +160,89 @@ export class SyncListPage {
     });
   }
 
-  applyChangesBaseOnAction = (res: any) => {
+  applyChangesByAction = (res: any) => {
       let promises = [];
       let query;
       let items = [];
 
-      _.map(res, (student, key) => {
+      if(! _.isEmpty(res)){
+        //
+        console.log('[2] applyChangesByAction', res);
 
-        switch(student.action){
-          case 'create':
-            query = `INSERT INTO students VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-            items = [
-                    student._id,
-                    student.action,
-                    student.name,
-                    student.age,
-                    student.information,
-                    student.level,
-                    student.created_at,
-                    student.updated_at,
-                  ]
-            this.processQuery(promises, items, query);
-          break;
+          _.map(res, (student, key) => {
 
-          case 'update':
-            query = `UPDATE students 
-                      SET action = ?,
-                          name = ?,
-                          age = ?,
-                          information = ?,
-                          level = ?,
-                          updated_at = ?
-                     WHERE _id = ?`;
-            items = [
-              'update',
-              student.name,
-              student.age,
-              student.information,
-              student.level,
-              student.updated_at,
-              student._id
-            ];
+          switch(student.action){
+              case 'create':
+                console.log('---sql create---');
+                query = `INSERT INTO students VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+                items = [
+                        student._id,
+                        student.action,
+                        student.name,
+                        student.age,
+                        student.information,
+                        student.level,
+                        student.created_at,
+                        student.updated_at,
+                      ]
+                this.processQuery(promises, items, query);
+              break;
 
-            this.processQuery(promises, items, query);
-          break;
+              case 'update':
+                console.log('---sql update---');
+                query = `UPDATE students 
+                          SET action = ?,
+                              name = ?,
+                              age = ?,
+                              information = ?,
+                              level = ?,
+                              updated_at = ?
+                        WHERE _id = ?`;
+                items = [
+                  'update',
+                  student.name,
+                  student.age,
+                  student.information,
+                  student.level,
+                  student.updated_at,
+                  student._id
+                ];
 
-          case 'delete':
-            query = `UPDATE students 
-                      SET action = ?,
-                          updated_at = ?
-                     WHERE _id = ?`;
-            
-            items = [
-              'delete',
-               student.updated_at,
-               student._id
-            ];
+                this.processQuery(promises, items, query);
+              break;
 
-            this.processQuery(promises, items, query);
-          break;
-        } 
-      });
+              case 'delete':
+                console.log('---sql delete---');
+                query = `UPDATE students 
+                          SET action = ?,
+                              updated_at = ?
+                        WHERE _id = ?`;
+                
+                items = [
+                  'delete',
+                  student.updated_at,
+                  student._id
+                ];
 
-    return Promise.all(promises);
+                this.processQuery(promises, items, query);
+              break;
+            }
+
+          });
+
+        //
+        return Promise.all(promises);
+
+      } else {
+
+        return Promise.resolve([]);
+
+      }
   }
 
   processQuery(promises, item, query){
     promises.push( 
-      this.syncSettings.queryBuilder(query, item)
+        this.syncSettings.queryBuilder(query, item)
       );
   }
 
@@ -231,22 +261,24 @@ export class SyncListPage {
     return promise;
   }
 
-  initialDBSync(){
+  processOnline(){
       const parseFromAPI = (res: any) => {
         
         let promise = new Promise( (resolve, reject) => {
-        
+          
+          console.log('My local db:', res.rows.length);
+
           if(res.rows.length === 0){
         
             this.initial_database_loader = this.loadingCtrl.create({
-              content: "Please wait...",
+              content: "Initial database loading...",
             });
             
             this.initial_database_loader.present();
             
             this.apiSettings.getStudents()
               .then( students => resolve(students) )
-              .catch( (err) => reject(err) )
+              .catch( (err) => reject(err) );
           
         } else {
             resolve(this.DO_NOTHING);
@@ -262,9 +294,15 @@ export class SyncListPage {
     | TODO: optimization
     */
       this.checkEmptyDatabase()
+        
         .then(parseFromAPI)
-        .then(this.applyChangesBaseOnAction)
+        
+        .then(this.applyChangesByAction)
+        
         .then((res: Array<any>) => {
+          
+          console.log('debug-------->', res);
+
           if(res.length === 0){
 
             this.checkDBupdates(); // When local is already sync, try to sync everytime it loads
@@ -310,7 +348,7 @@ export class SyncListPage {
                   
                   if( ! _.isEmpty(res)){
 
-                    console.log('has changes on object:', res);
+                    console.log('[1] has changes on object:', res);
 
                     this.updateLocalDatabase(res);
 
@@ -335,6 +373,17 @@ export class SyncListPage {
           alert('SNYC-LIST.ts getStudentsFromSQLite ERR ' + JSON.stringify(err));
         });
 
+      } else {
+
+        this.populateStudents();
+
+        this.presentToast('Everything is up to date.');
+
+        if(this.refresherRef){
+          this.refresherRef.complete();
+          this.refresherRef = null;
+        }
+
       }
 
     })
@@ -351,7 +400,7 @@ export class SyncListPage {
 
     loader.present();
 
-    this.applyChangesBaseOnAction(res)
+    this.applyChangesByAction(res)
       .then( (res) => {
           
           loader.dismiss();
@@ -398,41 +447,44 @@ export class SyncListPage {
   }
 
   populateStudents(){
-    let collections = [];
-    this.students = [];
-
+    
     this.getStudentsFromSQLite()
       .then( (res: any) => {
 
-        for(let i = 0; i < res.rows.length; i++){
+        if(res.rows.length !==0 ){
 
-            if(res.rows.item(i).action !== 'delete'){
-              collections.push({
-                _id: res.rows.item(i)._id,
-                rowid: res.rows.item(i).rowid,
-                name: res.rows.item(i).name,
-                age: res.rows.item(i).age,
-                information: res.rows.item(i).information,
-                level: res.rows.item(i).level,
-                created_at: res.rows.item(i).created_at,
-                updated_at: res.rows.item(i).updated_at,
-              });
-            }
+          console.log(res.rows, typeof res.rows);
 
-            if(i === res.rows.length - 1){
-              this.students = collections;
+          let collections = [];
 
-              if(collections.length===0){
-                console.log('binding to html', collections, this.students);
-                // this.students.length = 0;
-                // collections.length = 0;
-                this.resetStudents();
-              }
-            }
+          let obj2Arr = _.map(res.rows, (value, key) => {
+            return value;
+          });
+
+          collections = _.filter(obj2Arr, (student) => {
+            return student.action === 'create' || student.action === 'update';
+          });
+
+          if(collections.length===0){
+
+            this.students = new Array();
+
+            collections = [];
+
+            console.log('empty', this.students, collections);
+
+          } else {
+
+            this.students = collections;
+
+            console.log('with', this.students, collections);
+          }
+
         }
+
       })
       .catch( (err) => {
-        console.log('Sync-list.ts POPULATE ERROR');
+        console.log('Sync-list.ts POPULATE ERROR', err);
       });
   }
 
