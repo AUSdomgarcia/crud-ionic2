@@ -28,7 +28,7 @@ export class SyncNavigationPage {
   paramCont = { 
                 setEvent: (event) => { this.setEventToPool(event) },
                 clearEvents: () => { 
-                  
+
                   console.log('syncNavPool', this.eventPool);
                   
                   this.eventPool.map( (event: Function) => {
@@ -62,8 +62,9 @@ export class SyncNavigationPage {
   }
 
   ionViewWillLeave(){
-    this.paramCont.clearEvents();
-
+    if(this.navCtrl.getActive().name === 'SyncNavigationPage'){
+      this.paramCont.clearEvents();
+    }
     // let listPage: SyncListPage = this.tabOpt.getSelected().root;
     // console.log(listPage);
   }

@@ -120,13 +120,13 @@ export class SyncListPage {
     console.log('will enter');
     // this.clearSubscription();
 
-    this.studentUpdateSubscribe = () => {
+    let ref = this.studentUpdateSubscribe = () => {
       this.checkDBupdates();
     };
 
-    this.events.subscribe('student:update', this.studentUpdateSubscribe);
-
-    this.setEventPool(this.studentUpdateSubscribe);
+    this.events.subscribe('student:update', ref);
+    
+    this.setEventPool(ref);
   }
 
   clearSubscription(){
