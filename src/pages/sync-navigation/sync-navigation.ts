@@ -20,24 +20,56 @@ export class SyncNavigationPage {
   @ViewChild('tabOpt') tabOpt: Tabs;
 
   syncCms;
+
   syncList;
 
+  eventPool = [];
+
+  paramCont = { 
+                setEvent: (event) => { this.setEventToPool(event) },
+                clearEvents: () => { 
+                  
+                  console.log('syncNavPool', this.eventPool);
+                  
+                  this.eventPool.map( (event: Function) => {
+                    if(event){
+                      this.events.unsubscribe('student:update', event);
+                      event = null;
+                    }
+                  });
+
+                  this.eventPool.length = 0;
+
+                  console.log('syncNavPool', this.eventPool);
+                }
+              };  
+
   constructor(public navCtrl: NavController, public navParams: NavParams, private events: Events) {
+
+    this.eventPool = [];
+
     this.syncCms = SyncCmsPage;
     this.syncList = SyncListPage;
   }
 
+  setEventToPool(event){
+    this.eventPool.push(event);
+  }
+
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SyncNavigationPage');
+    // let t = this.navCtrl.getActive();
+    // console.log('ionViewDidLoad SyncNavigationPage', t.didLeave );
   }
 
   ionViewWillLeave(){
-    let listPage: SyncListPage = this.tabOpt.getSelected().root;
-    console.log(listPage);
+    this.paramCont.clearEvents();
+
+    // let listPage: SyncListPage = this.tabOpt.getSelected().root;
+    // console.log(listPage);
   }
 
   tabSelected(tab){
-    console.log(tab);
+    // console.log(tab);
   }
 
 }

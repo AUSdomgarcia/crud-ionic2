@@ -14,7 +14,7 @@
 
 <!--<ion-content padding>-->
 <ion-tabs #tabOpt>
-  <ion-tab tabTitle="Show List"   [root]="syncList"  (ionSelect)="tabSelected($event)"></ion-tab>
-  <ion-tab tabTitle="Manage Firebase" [root]="syncCms" (ionSelect)="tabSelected($event)"></ion-tab>
+  <ion-tab tabTitle="Show List"       [root]="syncList" [rootParams]="paramCont" (ionSelect)="tabSelected($event)"></ion-tab>
+  <ion-tab tabTitle="Manage Firebase" [root]="syncCms"  [rootParams]="paramCont" (ionSelect)="tabSelected($event)"></ion-tab>
 </ion-tabs>
 <!--</ion-content>-->

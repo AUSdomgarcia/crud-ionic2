@@ -30,7 +30,8 @@ export class SyncListPage {
 
   DO_NOTHING = {};
 
-  navigationLeaveSubscribe;
+
+  setEventPool;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private syncSettings: SyncSettings,
@@ -42,12 +43,31 @@ export class SyncListPage {
               private alertCtrl: AlertController,
               private events: Events) {
 
-                // this.students = [];
-                console.log('>>>', this.navCtrl.parent);
+                this.setEventPool = this.navParams.get('setEvent');
+
+                
               }
 
   destroySubscriber(){
     console.log('I was called');
+  }
+
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad SyncListPage');
+    
+    if(this.networkSettings.isAvailable()){
+
+      alert('Has Internet.');
+      
+      this.processOnline();
+
+    } else {
+      // TODO: 
+      // At start, internet is required to sync initial database from the server to app.
+      alert('No Internet.');
+
+      this.processOffline();
+    }
   }
 
   toggleUpdate(student){
@@ -98,50 +118,30 @@ export class SyncListPage {
 
   ionViewWillEnter(){
     console.log('will enter');
-
-    this.clearSubscription();
+    // this.clearSubscription();
 
     this.studentUpdateSubscribe = () => {
       this.checkDBupdates();
     };
 
     this.events.subscribe('student:update', this.studentUpdateSubscribe);
+
+    this.setEventPool(this.studentUpdateSubscribe);
   }
 
   clearSubscription(){
-    if(this.studentUpdateSubscribe){
-      this.events.unsubscribe('student:update', this.studentUpdateSubscribe);
-      this.studentUpdateSubscribe = null;
-    }
-
-    if(this.navigationLeaveSubscribe){
-      this.events.unsubscribe('navigation:leave', this.navigationLeaveSubscribe);
-      this.navigationLeaveSubscribe = null;
-    }
+    // if(this.studentUpdateSubscribe){
+    //   this.events.unsubscribe('student:update', this.studentUpdateSubscribe);
+    //   this.studentUpdateSubscribe = null;
+    // }
   }
 
   ionViewWillLeave(){
     console.log('will leave WWWW');
-    this.clearSubscription();
+    // this.clearSubscription();
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad SyncListPage');
-    
-    if(this.networkSettings.isAvailable()){
-
-      alert('Has Internet.');
-      
-      this.processOnline();
-
-    } else {
-      // TODO: 
-      // At start, internet is required to sync initial database from the server to app.
-      alert('No Internet.');
-
-      this.processOffline();
-    }
-  }
+  
 
   processOffline(){
     // Try to view database if not empty
