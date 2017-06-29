@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Network } from '@ionic-native/network';
+import { ToastController } from 'ionic-angular';
+
 
 
 @Injectable()
@@ -10,7 +12,7 @@ export class NetworkSettings {
     connectSubscription;
     hasNetwork = false;
     
-    constructor(private network: Network){}
+    constructor(private network: Network, private toastCtrl: ToastController){}
 
     init(){
         console.log('---init-network---');
@@ -30,16 +32,27 @@ export class NetworkSettings {
     listener(){
         this.disconnectSubscription = this.network.onDisconnect().subscribe(() => {
             console.log('network was disconnected :-(');
+            this.presentToast('network was disconnected');
             this.hasNetwork = false;
         });
 
         this.connectSubscription = this.network.onConnect().subscribe(() => {
             this.hasNetwork = true;
             console.log('network connected!');
+            this.presentToast('network connected');
         });
     }
 
     isAvailable() {
         return this.hasNetwork;
+    }
+
+    presentToast(message) {
+      let toast = this.toastCtrl.create({
+            message: message,
+            duration: 3000
+        });
+
+        toast.present();
     }
 }

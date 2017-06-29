@@ -217,8 +217,8 @@ export class CakeCreatorPage {
       case 'message':
         let message = PIXI.Sprite.fromImage(item.img);
           message.anchor.set(0.5);
-          message.height = 90;
-          message.width = 90;
+          message.height = 150;
+          message.width = 150;
           this.childrenManager(message, this.messageContainer);
       break;
     }
@@ -234,12 +234,6 @@ export class CakeCreatorPage {
     this.cakeCreatorSettings
         .saveEntry(this.app.renderer.view.toDataURL())
         .then( () => {
-          
-          // let t = this.toastCtrl.create({
-          //   message: 'Created cake entry successfully',
-          //   duration: 3000
-          // });
-          // t.present();
 
           loading.dismiss();
 

@@ -9,7 +9,7 @@ export class DeviceSettings {
     constructor(){}
 
     add(platform){
-       const customHeight = platform.height() - ( platform.height() * 0.45 ); 
+       const customHeight = platform.height() - ( platform.height() * 0.35 ); 
        platform.height = () => { return customHeight };
        this.platformRef = platform;
        this.hasPlatform = true;
@@ -21,7 +21,7 @@ export class DeviceSettings {
         }
         const webScreen = {
             width: () => { return window.innerWidth },
-            height: () => { return window.innerHeight - (window.innerHeight * 0.45) }
+            height: () => { return window.innerHeight - (window.innerHeight * 0.35) }
         };
         return this.platformRef = webScreen;
     }
