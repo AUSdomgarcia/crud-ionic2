@@ -123,6 +123,15 @@ export class ApiSettings {
     updateStudentDetails(student){
         return new Promise( (resolve, reject) => {
             const timestamp = Date.now();
+            
+           /* alert(
+            "id: "+ student._id +
+            " name: "+ student.name +
+            " age: "+ student.age +
+            " info: "+ student.information +
+            " level: "+ student.level +
+            " up_at: "+ timestamp 
+        )*/
 
             this.firebase_api
                 .database()
@@ -132,14 +141,21 @@ export class ApiSettings {
                         action: 'update',
                         name: student.name,
                         age: student.age,
-                        information: student.information,
+                        information: (student.information) ? student.information : '',
                         level: student.level,
                         updated_at : timestamp
                     },
                     (err) => {
                         if(err){
+
+                            // alert('PASS_TO_PROMISE_updateStudentDetails ' + JSON.stringify(err));
+                            
                             reject(err);
+
                         } else {
+
+                            // alert('NAG RESOLVED');
+
                             resolve();
                         }
                     });

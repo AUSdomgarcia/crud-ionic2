@@ -57,7 +57,7 @@ export class SyncListPage {
     
     if(this.networkSettings.isAvailable()){
 
-      alert('Has Internet.');
+      // alert('Has Internet.');
       
       this.processOnline();
 
@@ -161,13 +161,16 @@ export class SyncListPage {
   }
 
   applyChangesByAction = (res: any) => {
+
+      console.log('---[2]applyChangesByAction---');
+
       let promises = [];
       let query;
       let items = [];
 
       if(! _.isEmpty(res)){
         //
-        console.log('[2] applyChangesByAction', res);
+        // console.log('[2] applyChangesByAction', res);
 
           _.map(res, (student, key) => {
 
@@ -262,11 +265,16 @@ export class SyncListPage {
   }
 
   processOnline(){
+
+      console.log('---processOnline---');
+
       const parseFromAPI = (res: any) => {
+
+        console.log('---[1]parseFromAPI---');
         
         let promise = new Promise( (resolve, reject) => {
           
-          console.log('My local db:', res.rows.length);
+          // console.log('My local db:', res.rows.length);
 
           if(res.rows.length === 0){
         
@@ -277,7 +285,11 @@ export class SyncListPage {
             this.initial_database_loader.present();
             
             this.apiSettings.getStudents()
-              .then( students => resolve(students) )
+              .then( students => {
+                // alert('ProcessOnline SUCC ' + JSON.stringify(students));
+
+                resolve(students);
+              } )
               .catch( (err) => reject(err) );
           
         } else {
@@ -301,7 +313,7 @@ export class SyncListPage {
         
         .then((res: Array<any>) => {
           
-          console.log('debug-------->', res);
+          // console.log('debug-------->', res);
 
           if(res.length === 0){
 
@@ -309,6 +321,7 @@ export class SyncListPage {
 
           } else {
 
+            console.log('---INITIAL DATABASE IN PROCESS---');
             this.initial_database_loader.dismiss();
             this.populateStudents();
 
@@ -316,7 +329,8 @@ export class SyncListPage {
 
         })
         .catch((err)=> {
-          console.log('error', err);
+          alert('sync-list.ts checkEmptyDatabase ERR' + JSON.stringify(err))
+          // console.log('error', err);
         });
   }
 
@@ -330,7 +344,7 @@ export class SyncListPage {
     this.checkEmptyDatabase()
     .then( (res: any) => {
 
-      console.log('----CURRENT DB ITEM(s)------->', res.rows.length)
+      // console.log('----CURRENT DB ITEM(s)------->', res.rows.length)
 
       if(res.rows.length !== 0){
 
@@ -348,7 +362,7 @@ export class SyncListPage {
                   
                   if( ! _.isEmpty(res)){
 
-                    console.log('[1] has changes on object:', res);
+                    // console.log('[1] has changes on object:', res);
 
                     this.updateLocalDatabase(res);
 
@@ -442,49 +456,105 @@ export class SyncListPage {
           reject(err);
         });
     });
-
     return promise;
   }
 
   populateStudents(){
-    
+
     this.getStudentsFromSQLite()
+
       .then( (res: any) => {
+
+        // console.log('---[3]getStudentsFromSQLite---');
+
+        // alert('LIST OF STUDENTS BEFORE DISPLAYING ' + JSON.stringify(res));
+
+        let collections = [];
 
         if(res.rows.length !==0 ){
 
-          console.log(res.rows, typeof res.rows);
+          //*** console.log(res.rows, typeof res.rows);
 
-          let collections = [];
+          // let obj2Arr = _.map(res.rows, (value, key) => {
+          //   return value;
+          // });
 
-          let obj2Arr = _.map(res.rows, (value, key) => {
-            return value;
-          });
+          // collections = _.filter(obj2Arr, (student) => {
+          //   return student.action === 'create' || student.action === 'update';
+          // });
 
-          collections = _.filter(obj2Arr, (student) => {
-            return student.action === 'create' || student.action === 'update';
-          });
+          // if(collections.length===0){
 
-          if(collections.length===0){
+          //   this.students = new Array();
 
-            this.students = new Array();
+          //   collections = [];
 
-            collections = [];
+            //*** console.log('empty', this.students, collections);
 
-            console.log('empty', this.students, collections);
+          // } else {
 
-          } else {
+            // this.students = collections;
 
-            this.students = collections;
+            // console.log('with', this.students, collections);
+          // }
 
-            console.log('with', this.students, collections);
+          let resToReadableArray = [];
+
+          for(let i = 0; i < res.rows.length; i++){
+              resToReadableArray
+                  .push({
+                      rowid: res.rows.item(i).rowid,
+                      _id: res.rows.item(i)._id,
+                      action: res.rows.item(i).action,
+                      name: res.rows.item(i).name,
+                      age: res.rows.item(i).age,
+                      information: (res.rows.item(i).information) ? res.rows.item(i).information : '',
+                      level: res.rows.item(i).level,
+                      created_at: res.rows.item(i).created_at,
+                      updated_at: res.rows.item(i).updated_at
+                  });
           }
 
+          const useMap = (res: any) => {
+            let p = new Promise( (resolve, reject) => {
+              let scope = _.map(res, (value, key) => {
+                              return value;
+                          });
+                // alert('DO MAP ' + JSON.stringify(scope));
+                resolve(scope);
+            });
+            return p;
+          }
+
+          const useFilter = (res: any) => {
+            let p = new Promise( (resolve, reject) => {
+              let scope = _.filter(res, (student) => {
+                              return student.action === 'create' || student.action === 'update';
+                          });
+                
+                // alert('DO FILTER ' + JSON.stringify(scope));
+                resolve(scope);
+            });
+            return p;
+          }
+
+          // alert('BEFORE USEMAP/USEFILTER ' +  JSON.stringify(res));
+
+          useMap(resToReadableArray).then(useFilter)
+            .then( (res: any) => {
+              // alert('SUCX ' + JSON.stringify(res));
+              this.students = res;
+            })
+            .catch( (err) => {
+              alert('ERRX ' + JSON.stringify(res));
+            });
+        
+        // length !== 0 block
         }
 
       })
       .catch( (err) => {
-        console.log('Sync-list.ts POPULATE ERROR', err);
+        alert('Sync-list.ts populateStudents ERR ' + JSON.stringify(err));
       });
   }
 

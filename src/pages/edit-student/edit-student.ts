@@ -39,8 +39,11 @@ export class EditStudentPage {
     if(this.networkSettings.isAvailable()){
       //  
       this.apiSettings.updateStudentDetails(student)
+      
       .then( (res) => {
+        
         // alert('EDIT-STUDENT.ts updateStudentDetails SUC ' + JSON.stringify(res));
+        
         toastr = this.toastCtrl.create({
           message: 'Updated student successfully!',
           duration: 3000
@@ -54,7 +57,9 @@ export class EditStudentPage {
 
       })
       .catch( (err) => {
-        alert('EDIT-STUDENT.ts updateStudentDetails ERR ' + JSON.stringify(err));
+        
+        alert('XEDIT-STUDENT.ts updateStudentDetails ERR ' + JSON.stringify(err));
+
       });
       //
     } else {

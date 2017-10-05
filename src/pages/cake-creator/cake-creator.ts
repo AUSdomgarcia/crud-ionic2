@@ -72,7 +72,7 @@ export class CakeCreatorPage {
     },
     {
       name: 'Mothers day',
-      img: 'assets/cakemaker/messages/hmd.png',
+      img: 'assets/cakemaker/messages/_hmd.png',
       type: 'message'
     },
     {

@@ -29,7 +29,7 @@ export class SyncNavigationPage {
                 setEvent: (event) => { this.setEventToPool(event) },
                 clearEvents: () => { 
 
-                  console.log('syncNavPool', this.eventPool);
+                  // console.log('syncNavPool', this.eventPool);
                   
                   this.eventPool.map( (event: Function) => {
                     if(event){

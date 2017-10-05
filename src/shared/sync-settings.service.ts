@@ -81,13 +81,29 @@ export class SyncSettings {
             switch(this.settings.type){
 
                 case 'sqlite':
-                    this.settings.db.executeSql(query, data)
-                            .then( (res) => {
-                                resolve(res);
-                            })
-                            .catch((err)=>{
-                                reject(err);
-                            });
+                    // this.settings.db.executeSql(query, data)
+                    //         .then( (res) => {
+                    //             resolve(res);
+                    //         })
+                    //         .catch((err)=>{
+                    //             reject(err);
+                    //         });
+
+                    this.sqlite.create({
+                        name: 'syncDB.db',
+                        location: 'default'
+                    })
+                    .then( (db: SQLiteObject) => {
+
+                       db.executeSql(query, data)
+                       .then( (res) => resolve(res) )
+                       .catch( (err) => reject(err) );
+                       
+                    })
+                    .catch( (err) => {
+                        reject(err);
+                    });
+
                 break;
 
                 case 'websql':
@@ -96,7 +112,7 @@ export class SyncSettings {
                             tx.executeSql(query, data, (tx, results) => { 
                                 resolve(results);
                             }, (t, err) => {
-                                console.log(err)
+                                // console.log(err)
                                 reject(JSON.stringify(err));
                             });
                     });
